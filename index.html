@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSC Design Skill Hub</title>
+  <style>
+    :root {
+      --bg: #fff8f6;
+      --card: #ffffff;
+      --text: #2d2d2d;
+      --muted: #666666;
+      --brand: #ee4d2d;
+      --brand-dark: #d74123;
+      --line: #f2d8d2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background-color: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      /* 相对视口一整屏渐变，避免随内容区高度被裁成「几块」 */
+      background: linear-gradient(
+        180deg,
+        #fff2e8 0%,
+        #fff7f4 28%,
+        #fffbf9 55%,
+        #ffffff 100%
+      );
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+
+    .page-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: 32px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      flex: 1 0 auto;
+      width: min(1080px, 92%);
+      margin: 0 auto;
+      padding: 48px 0 40px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .hero-logo {
+      display: block;
+      margin: 0 auto 18px;
+      height: auto;
+      max-height: 56px;
+      width: auto;
+      max-width: min(320px, 88vw);
+      object-fit: contain;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hero p {
+      margin: 16px auto 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(238, 77, 45, 0.06);
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0 16px;
+      min-width: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      flex-shrink: 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f0f0f0;
+      color: #5c5c5c;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.25;
+    }
+
+    h3.card-title {
+      margin: 0;
+      min-width: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      outline: none;
+    }
+
+    h3.card-title:hover {
+      color: var(--brand);
+    }
+
+    h3.card-title:focus-visible {
+      box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.35);
+      border-radius: 4px;
+    }
+
+    .card p {
+      margin: 0 0 14px;
+      line-height: 1.55;
+      color: var(--muted);
+      min-height: 72px;
+    }
+
+    .card-footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 16px;
+      width: 100%;
+    }
+
+    .card-actions-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0;
+      min-width: 0;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .card-refs {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .card-refs a {
+      color: var(--brand);
+      text-decoration: none;
+    }
+
+    .card-refs a:hover {
+      text-decoration: underline;
+    }
+
+    .card-refs .refs-sep {
+      margin: 0 8px;
+      color: #d0d0d0;
+    }
+
+    .btn {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: var(--brand-dark);
+    }
+
+    .btn.ghost {
+      background: #fff;
+      color: var(--brand);
+      border: 1px solid #f5b4a6;
+    }
+
+    .btn.ghost:hover {
+      background: #fff4f1;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(22, 22, 22, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(760px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 0;
+      background: #f7f7f7;
+      cursor: pointer;
+    }
+
+    .modal h2 {
+      margin: 4px 0 10px;
+    }
+
+    .modal h4 {
+      margin: 18px 0 8px;
+      color: #404040;
+    }
+
+    .modal ul {
+      margin: 6px 0 8px 0;
+      padding-left: 1.1em;
+      line-height: 1.6;
+      list-style-position: outside;
+    }
+
+    .modal ul li {
+      padding-left: 0.15em;
+    }
+
+    .prompt-box {
+      margin-top: 10px;
+      background: #1f1f1f;
+      color: #efefef;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #3b3b3b;
+    }
+
+    .tip {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .prompt-box + .tip {
+      margin-top: 16px;
+    }
+
+    .copy-toast {
+      position: fixed;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%) translateY(-12px);
+      max-width: min(440px, calc(100% - 32px));
+      padding: 12px 18px;
+      background: rgba(36, 36, 36, 0.94);
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.55;
+      border-radius: 8px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      z-index: 10000;
+      text-align: center;
+    }
+
+    .copy-toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .copy-toast.copy-toast--error {
+      background: rgba(110, 28, 28, 0.95);
+    }
+
+    .site-footer {
+      flex-shrink: 0;
+      width: min(1080px, 92%);
+      margin: 0 auto;
+      padding-top: 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .site-footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 4px 0;
+    }
+
+    .site-footer-links a {
+      color: #888888;
+      text-decoration: none;
+    }
+
+    .site-footer-links a:hover {
+      color: #555555;
+      text-decoration: underline;
+    }
+
+    .site-footer-links .footer-sep {
+      margin: 0 10px;
+      color: #c8c8c8;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+  <main class="container">
+    <section class="hero">
+      <h1 class="visually-hidden">SSC Design Skill Hub</h1>
+      <img class="hero-logo" src="assets/Logo.png" alt="" decoding="async" role="presentation">
+      <p>所有Skill支持Codex/Cursor/Claude Code等AI工具直接复制Prompt安装使用</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="prd"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >prd-design-brief</h3>
+          <span class="badge">PRD速读理解</span>
+        </div>
+        <p>帮助设计师快速阅读和理解PRD，把长文档需求压缩为可快速开工的设计执行摘要，覆盖背景、流程、模块、页面范围、设计机会点和工作量判断。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/prd-design-brief" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/prd-design-brief/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="prdPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="selfcheck"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >design-selfcheck</h3>
+          <span class="badge">设计自查</span>
+        </div>
+        <p>面向 B 端电商供应链设计稿的交付前系统自查 Skill。结合需求背景与设计内容，输出结构化问题与优先级建议，帮助设计师更快完成质量闭环。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/design-selfcheck" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/design-selfcheck/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="selfcheckPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="mockdata"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >figma-mockdata-reviewer</h3>
+          <span class="badge">设计稿内容填充</span>
+        </div>
+        <p>审查 Figma 设计稿中的填充文本（时间、ID、金额、状态等）是否真实自洽，输出分级改进建议；在你确认后可对文本节点批量替换，且不改动样式。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/figma-mockdata-reviewer" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/figma-mockdata-reviewer/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="mockdataPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="site-footer-links" aria-label="实践指南与撰写模板">
+      <a href="docs/ai-skill-ppt/index.html">Skill 实践指南</a>
+      <span class="footer-sep" aria-hidden="true">｜</span>
+      <a href="markdown-viewer.html?file=docs%2FSkill%E6%92%B0%E5%86%99%E6%A8%A1%E6%9D%BF%EF%BC%88%E6%95%99%E7%A8%8B%E7%89%88%EF%BC%89.md">撰写模板（教程版）</a>
+      <span class="footer-sep" aria-hidden="true">｜</span>
+      <a href="markdown-viewer.html?file=docs%2FSkill%20%E6%92%B0%E5%86%99%E6%A8%A1%E6%9D%BF%EF%BC%88%E7%BA%AF%E5%87%80%E7%89%88%EF%BC%89.md">撰写模板（纯净版）</a>
+    </nav>
+  </footer>
+  </div>
+
+  <div
+    id="copyToast"
+    class="copy-toast"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    aria-hidden="true"
+  ></div>
+
+  <div class="modal" id="skillModal" aria-hidden="true">
+    <div class="modal-panel">
+      <button class="close" id="closeModal" aria-label="关闭">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const prompts = {
+      prdPrompt: `请为 Codex 安装 skill「prd-design-brief」。
+仓库：https://github.com/shopeedesign/prd-design-brief
+将仓库 main 分支的 SKILL.md 放到 ~/.codex/skills/prd-design-brief/SKILL.md。
+完成后回复：成功或失败。`,
+      selfcheckPrompt: `请为 Codex 安装 skill「design-selfcheck」。
+仓库：https://github.com/shopeedesign/design-selfcheck
+将仓库完整同步到 ~/.codex/skills/design-selfcheck/（须含 reference/checklist，勿只拷 SKILL.md）。
+完成后回复：成功或失败。`,
+      mockdataPrompt: `请为 Codex 安装 skill「figma-mockdata-reviewer」。
+仓库：https://github.com/shopeedesign/figma-mockdata-reviewer
+将仓库 main 分支的 SKILL.md 放到 ~/.codex/skills/figma-mockdata-reviewer/SKILL.md。
+完成后回复：成功或失败。`
+    };
+
+    const details = {
+      prd: {
+        title: "prd-design-brief",
+        html: `
+          <h2>prd-design-brief</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>帮助设计师快速阅读与理解 PRD，避免只做原文复述。</li>
+            <li>将长文档压缩为可开工的设计执行摘要：背景、流程、模块、页面范围、设计机会点、工作量与待确认项。</li>
+            <li>适用于 kickoff 前对齐认知、拆解设计范围与评估投入。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要「PRD 简报 / 设计简报 / 需求理解」类产出，或要从设计视角先建立全局图景时。</li>
+            <li>输入可为 Confluence 链接、<code>pageId</code>，或直接粘贴 PRD 正文。</li>
+            <li>不适合：只想搜文档不分析、已有设计稿要做自查、或要写 PRD 而非读 PRD 的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.prdPrompt}</div>
+          <p class="tip">本Skill由vertu.huang撰写</p>
+        `
+      },
+      selfcheck: {
+        title: "design-selfcheck",
+        html: `
+          <h2>design-selfcheck</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>面向 B 端电商供应链设计稿，在交付前做系统性自查。</li>
+            <li>先收集需求背景，再输出结构化评审：缺陷与优化点，并按严重 / 一般 / 优化分级给出建议。</li>
+            <li>适用于 Figma 链接评审、走查前预检、交付前质量把关。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要「设计自查 / review 设计稿」类产出，或已拿到 Figma 链接、截图、导出内容时。</li>
+            <li>可先贴 PRD 再贴设计稿，信息越完整，结论越贴近业务与约束。</li>
+            <li>不适合：只想泛泛聊天、或没有任何设计稿 / 描述可参考的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.selfcheckPrompt}</div>
+          <p class="tip">本Skill由vertu.huang撰写</p>
+        `
+      },
+      mockdata: {
+        title: "figma-mockdata-reviewer",
+        html: `
+          <h2>figma-mockdata-reviewer</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>针对 Figma 中的 mock 填充数据做场景化审查：时间、日期、ID、金额、状态、用户名等是否可信、一致。</li>
+            <li>输出有序改进建议（含严重度分级与替换理由），在用户确认前不会擅自改写设计稿。</li>
+            <li>在用户确认后，可对目标文本节点批量替换内容，且不改变字体、颜色、字号等样式。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要检查「填充数据 / mock data / 假数据 / UI 数据审查」，或希望对示例数据做统一与优化时。</li>
+            <li>已提供可访问的 Figma 链接（或等价上下文），并愿意在批量替换前完成确认与范围约定时。</li>
+            <li>不适合：要做整稿结构与交互层面的方案评审（更适合 design-selfcheck）、或没有任何 Figma / 截图 / 范围说明时。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.mockdataPrompt}</div>
+          <p class="tip">本Skill由vertu.huang撰写</p>
+        `
+      }
+    };
+
+    const modal = document.getElementById("skillModal");
+    const modalContent = document.getElementById("modalContent");
+    const closeModalBtn = document.getElementById("closeModal");
+
+    function openSkillModal(key) {
+      const data = details[key];
+      if (!data) return;
+      modalContent.innerHTML = data.html;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    document.querySelectorAll("[data-open-modal]").forEach((el) => {
+      el.addEventListener("click", () => {
+        openSkillModal(el.getAttribute("data-open-modal"));
+      });
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openSkillModal(el.getAttribute("data-open-modal"));
+        }
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      modalContent.innerHTML = "";
+    }
+
+    closeModalBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
+
+    const copyToastEl = document.getElementById("copyToast");
+    let copyToastTimer;
+
+    function showCopyToast(message, isError) {
+      copyToastEl.textContent = message;
+      copyToastEl.classList.toggle("copy-toast--error", Boolean(isError));
+      copyToastEl.classList.add("show");
+      copyToastEl.setAttribute("aria-hidden", "false");
+      clearTimeout(copyToastTimer);
+      copyToastTimer = setTimeout(() => {
+        copyToastEl.classList.remove("show", "copy-toast--error");
+        copyToastEl.setAttribute("aria-hidden", "true");
+        copyToastEl.textContent = "";
+      }, 3000);
+    }
+
+    async function copyPrompt(promptKey) {
+      const text = prompts[promptKey];
+      try {
+        await navigator.clipboard.writeText(text);
+        showCopyToast("已复制安装Prompt，发送到Codex即可自动安装", false);
+      } catch (err) {
+        showCopyToast("复制失败，请检查浏览器权限或手动复制弹窗中的 Prompt。", true);
+      }
+    }
+
+    document.querySelectorAll("[data-copy]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-copy");
+        copyPrompt(key);
+      });
+    });
+  </script>
+</body>
+</html>

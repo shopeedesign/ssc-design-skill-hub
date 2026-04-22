@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Skill 实践指南 · 有声 PPT</title>
+<style>
+  /* ---------- Figma design tokens (Cursor-Test / Page 4) ---------- */
+  :root {
+    --figma-white: #ffffff;
+    --figma-text: #121212;
+    --figma-text-2: #404040;
+    --figma-text-muted: #999999;
+    --figma-border: #dedede;
+    --figma-surface: #f7f7f7;
+    --figma-cover-sub: #9ea1a8;
+    --figma-page-num: #999999;
+  }
+
+  /* ---------- Base ---------- */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #0d0d0f;
+    color: var(--figma-text);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100%;
+    min-height: 100dvh;
+    padding: 24px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+  }
+
+  /* ---------- Stage ---------- */
+  .stage-wrapper {
+    width: 100%;
+    max-width: 1440px;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage {
+    width: 100%;
+    aspect-ratio: 1440 / 810;
+    position: relative;
+    background: #e8e8ea;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .stage:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+    max-width: none;
+    background: #0d0d0f;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .stage::backdrop { background: #0d0d0f; }
+  /* 1440x810 canvas inside stage - scale content via CSS vars */
+  .canvas {
+    position: absolute;
+    inset: 0;
+    transform-origin: top left;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 1440px;
+    height: 810px;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    background: var(--figma-white);
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+
+  /* Common slide chrome — matches Figma */
+  .chapter-tag {
+    position: absolute;
+    top: 46px; left: 120px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 500; color: var(--figma-text-2);
+    letter-spacing: 0.3px;
+    line-height: normal;
+  }
+  .chapter-tag::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--figma-text);
+    flex-shrink: 0;
+  }
+  .page-num {
+    position: absolute; left: 1350px; top: 776px;
+    font-size: 11px; font-weight: 400; color: var(--figma-page-num);
+    line-height: normal;
+  }
+  .slide h1.slide-h1 {
+    position: absolute; top: 108px; left: 120px;
+    font-size: 44px; font-weight: 500; line-height: 54px;
+    letter-spacing: 0;
+    color: var(--figma-text);
+    max-width: 1200px;
+  }
+  .slide .subtitle {
+    position: absolute; top: 170px; left: 120px;
+    font-size: 15px; font-weight: 400; color: var(--figma-text-2); line-height: normal;
+  }
+
+  /* ================= Slide 01 · 封面 (Figma 206:1160) ================= */
+  .cover-tags { position: absolute; top: 281px; left: 120px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .cover-tag {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    background: var(--figma-surface); color: var(--figma-text-2);
+    border: 1px solid var(--figma-border);
+    line-height: normal;
+  }
+  .cover-title {
+    position: absolute; top: 324px; left: 120px;
+    font-size: 88px; font-weight: 600; letter-spacing: 0;
+    line-height: normal; color: var(--figma-text);
+    white-space: nowrap;
+  }
+  .cover-sub {
+    position: absolute; top: 463px; left: 120px;
+    font-size: 14px; font-weight: 400; color: var(--figma-cover-sub);
+    line-height: 22px; max-width: 780px;
+  }
+  .cover-author { position: absolute; top: 694px; left: 124px; font-size: 14px; font-weight: 400; color: var(--figma-cover-sub); line-height: 22px; }
+
+  /* ================= Slide 02 · 目录 (Figma 206:1190) ================= */
+  .toc-title {
+    position: absolute; top: 108px; left: 120px;
+    font-size: 44px; font-weight: 500; line-height: 56px; color: var(--figma-text);
+  }
+  .toc-card {
+    position: absolute; left: 120px; width: 1200px; height: 96px;
+    background: var(--figma-surface);
+    border: 1px solid var(--figma-border);
+    border-radius: 8px;
+    display: flex; align-items: stretch; overflow: hidden;
+  }
+  .toc-card .bar { width: 4px; background: var(--figma-text-2); flex-shrink: 0; }
+  .toc-num {
+    width: 72px; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .toc-main { flex: 1; display: flex; flex-direction: column; gap: 6px; justify-content: center; padding-right: 20px; min-width: 0; }
+  .toc-main .name { font-size: 17px; font-weight: 600; color: var(--figma-text); line-height: normal; }
+  .toc-main .desc { font-size: 13px; font-weight: 400; color: var(--figma-text-2); line-height: normal; }
+
+  /* ================= Generic cards / boxes ================= */
+  .card {
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid var(--figma-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .card-title { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 8px; }
+  .card-sub { font-size: 13px; color: #777; margin-bottom: 16px; }
+
+  /* ================= Slide 03 · AI 会话窗口 (Figma 206:1231) ================= */
+  .s3-wrap {
+    position: absolute; top: 218px; left: 120px; width: 1199px; height: 489px;
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 12px;
+    padding: 0 40px; display: flex; align-items: center;
+  }
+  .s3-inner { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+  .s3-cap { font-size: 13px; font-weight: 600; color: var(--figma-text-2); line-height: normal; }
+  .s3-row {
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 8px;
+    padding: 10px 16px; min-height: 76px; display: flex; flex-direction: column; gap: 4px; justify-content: center;
+  }
+  .s3-row .s3-line1 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .s3-row .s3-line1 .zh { font-size: 14px; font-weight: 600; color: var(--figma-text); }
+  .s3-row .s3-line1 .en { font-size: 12px; font-weight: 400; color: var(--figma-text-muted); }
+  .s3-row .s3-line2 { font-size: 12px; font-weight: 400; color: var(--figma-text-2); }
+
+  /* ================= Slide 04 · 上下文工程全景 (Figma 206:1282) ================= */
+  .s4-left {
+    position: absolute; top: 214px; left: 120px; width: 580px; height: 440px;
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 12px;
+    overflow: hidden;
+  }
+  .s4-left-title { position: absolute; left: 19px; top: 15px; font-size: 12px; font-weight: 600; color: var(--figma-text-2); letter-spacing: 0.2px; }
+  .s4-left-sub { position: absolute; left: 19px; top: 35px; font-size: 11px; font-weight: 400; color: var(--figma-text-muted); }
+  .s4-grid-wrap {
+    position: absolute; left: 21px; top: 59px; width: 536px; height: 280px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 8px; overflow: hidden;
+  }
+  .s4-grid-wrap .lbl { position: absolute; left: 15px; top: 9px; font-size: 12px; font-weight: 600; color: var(--figma-text-2); }
+  .s4-grid {
+    position: absolute; left: 15px; top: 37px; width: 506px;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;
+  }
+  .s4-box {
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    padding: 12px 10px; font-size: 11px; text-align: center;
+  }
+  .s4-box:last-child { background: #f8f8f8; }
+  .s4-box .n { font-weight: 600; color: var(--figma-text); line-height: normal; }
+  .s4-box .t { font-weight: 400; color: var(--figma-text-2); line-height: normal; }
+  .s4-long {
+    position: absolute; left: 21px; top: 355px; width: 534px; height: 56px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 6px;
+    display: flex; align-items: center; gap: 12px; padding: 0 16px; font-size: 12px;
+  }
+  .s4-long .b { font-weight: 600; color: var(--figma-text-2); white-space: nowrap; }
+  .s4-long .s { font-weight: 400; color: var(--figma-text-muted); }
+  .s4-right {
+    position: absolute; top: 212px; left: 750px; width: 620px; height: 516px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .s4-th {
+    display: grid; grid-template-columns: 190px 260px 170px; height: 36px; align-items: center;
+    padding: 0 16px; font-size: 12px; font-weight: 600; color: var(--figma-text-muted);
+    background: var(--figma-surface); letter-spacing: 0.3px;
+  }
+  .s4-tr {
+    display: grid; grid-template-columns: 190px 260px 170px; min-height: 79px; align-items: center;
+    padding: 0 16px; font-size: 12px; border-top: 1px solid var(--figma-border);
+  }
+  .s4-tr .k { font-weight: 600; color: var(--figma-text); display: flex; align-items: center; gap: 8px; }
+  .s4-tr .k.dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--figma-text); flex-shrink: 0; }
+  .s4-tr .mid { font-weight: 400; color: var(--figma-text-2); line-height: 1.45; max-width: 240px; }
+  .s4-tr .cur { font-weight: 500; color: var(--figma-text-2); }
+  .s4-right .s4-tr:first-child .cur { color: var(--figma-text-muted); }
+  .s4-foot {
+    position: absolute; top: 668px; left: 120px; width: 580px; height: 60px;
+    border: 1px dashed var(--figma-border); border-radius: 8px;
+    display: flex; align-items: center; padding: 0 16px;
+  }
+  .s4-foot-inner { display: flex; flex-direction: column; gap: 2px; color: var(--figma-text-2); }
+  .s4-foot-inner .t { font-size: 13px; font-weight: 600; }
+  .s4-foot-inner .d { font-size: 12px; font-weight: 400; }
+
+  /* ================= Slide 05 · Skill 本质定义 (Figma 208:1160) ================= */
+  .s5-def {
+    position: absolute; top: 220px; left: 120px; width: 570px; height: 168px;
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 10px;
+    padding: 20px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .s5-def .t { font-size: 14px; font-weight: 600; color: var(--figma-text); line-height: normal; }
+  .s5-def p {
+    font-size: 13px; font-weight: 400; color: var(--figma-text); line-height: 20px; margin: 0;
+    max-width: 530px;
+  }
+  .s5-features {
+    position: absolute; top: 444px; left: 120px; width: 570px;
+    bottom: 132px;
+    display: flex; flex-direction: column; gap: 12px;
+    justify-content: space-between;
+  }
+  .s5-feat {
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 8px;
+    width: 570px; box-sizing: border-box;
+    display: flex; flex-direction: row; align-items: center; gap: 14px;
+    padding: 14px 16px; min-height: 0;
+  }
+  .s5-feat .num {
+    flex-shrink: 0;
+    background: var(--figma-white); border-radius: 6px;
+    padding: 4px 10px; font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+    line-height: normal;
+  }
+  .s5-feat .body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .s5-feat .h { font-size: 14px; font-weight: 600; color: var(--figma-text); line-height: normal; }
+  .s5-feat .d { font-size: 12px; font-weight: 400; color: var(--figma-text-2); line-height: 18px; max-width: 460px; }
+
+  .s5-right {
+    position: absolute; top: 218px; left: 736px; width: 589px; height: 460px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .s5-right .s5-r-title {
+    height: 38px; flex-shrink: 0; background: var(--figma-surface);
+    display: flex; align-items: center; padding: 0 20px;
+    font-size: 13px; font-weight: 600; color: var(--figma-text-2); letter-spacing: 0.2px;
+  }
+  .s5-right .s5-r-head {
+    height: 32px; flex-shrink: 0; background: var(--figma-surface);
+    display: grid; grid-template-columns: 130px 200px 1fr; align-items: center; padding: 0 20px;
+    font-size: 11px; font-weight: 600; color: var(--figma-text-muted); letter-spacing: 0.3px;
+  }
+  .s5-right .s5-r-rule { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s5-right .s5-r-row {
+    display: grid; grid-template-columns: 130px 200px 1fr; align-items: center;
+    min-height: 62px; padding: 0 20px; flex: 1 1 0; background: var(--figma-white);
+    font-size: 12px; border-top: 1px solid var(--figma-border);
+  }
+  .s5-right .s5-r-row:first-of-type { border-top: none; }
+  .s5-right .s5-r-row .c1 { font-size: 13px; font-weight: 600; color: var(--figma-text); }
+  .s5-right .s5-r-row .c2 { font-size: 12px; font-weight: 400; color: var(--figma-text-muted); padding-right: 8px; line-height: 1.4; max-width: 220px; }
+  .s5-right .s5-r-row .c3 { font-size: 12px; font-weight: 500; color: var(--figma-text-2); line-height: 1.4; max-width: 250px; }
+
+  /* ================= Slide 06 · 三类工具对比 (Figma 208:1251) ================= */
+  .s6-wrap {
+    position: absolute; top: 218px; left: 120px; width: 1205px; height: 452px;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: stretch;
+  }
+  .s6-col {
+    width: 380px; height: 452px; box-sizing: border-box;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .s6-bar { height: 4px; flex-shrink: 0; background: var(--figma-text-2); }
+  .s6-head {
+    height: 72px; flex-shrink: 0; box-sizing: border-box;
+    padding: 16px 20px 12px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .s6-head .name { font-size: 22px; font-weight: 500; color: var(--figma-text); line-height: normal; }
+  .s6-head .sub { font-size: 13px; font-weight: 400; color: var(--figma-text-muted); line-height: normal; }
+  .s6-hr { height: 1px; flex-shrink: 0; background: var(--figma-border); }
+  .s6-row {
+    flex: 1 1 0; min-height: 58px; display: flex; flex-direction: row; align-items: center;
+    padding: 0 20px; box-sizing: border-box;
+  }
+  .s6-row .k {
+    width: 110px; flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--figma-text-muted); line-height: normal;
+  }
+  .s6-row .v {
+    flex: 1; width: 250px; font-size: 13px; font-weight: 400; color: var(--figma-text); line-height: normal; max-width: 244px;
+  }
+
+  /* ================= Slide 07 · 应用决策矩阵 (Figma 209:1160) ================= */
+  .s7-table {
+    position: absolute; top: 218px; left: 120px; width: 1200px; height: 476px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .s7-head {
+    height: 38px; flex-shrink: 0; background: var(--figma-surface);
+    display: grid; grid-template-columns: 460px 200px 540px; align-items: center; padding: 0 20px;
+    font-size: 12px; font-weight: 600; color: var(--figma-text-muted); letter-spacing: 0.3px;
+  }
+  .s7-hr { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s7-tr {
+    flex: 1 1 0; min-height: 58px; display: grid; grid-template-columns: 460px 200px 540px;
+    align-items: center; padding: 0 20px;
+  }
+  .s7-tr .c1 { font-size: 13px; font-weight: 400; color: var(--figma-text); padding-right: 12px; max-width: 445px; line-height: 1.35; }
+  .s7-tr .c2 { display: flex; align-items: center; }
+  .s7-tr .pill {
+    display: inline-block; background: var(--figma-surface); border-radius: 4px; padding: 4px 8px;
+    font-size: 12px; font-weight: 600; color: var(--figma-text-2);
+  }
+  .s7-tr .c3 { font-size: 13px; font-weight: 400; color: var(--figma-text-2); max-width: 525px; line-height: 1.35; }
+
+  /* ================= Slide 08 · 架构对比 (Figma 209:1241) ================= */
+  .s8-old {
+    position: absolute; top: 220px; left: 120px; width: 548px; height: 480px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .s8-new {
+    position: absolute; top: 220px; left: 692px; width: 644px; height: 480px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .s8-hd {
+    height: 40px; flex-shrink: 0; background: #f8f8f8; display: flex; align-items: center; gap: 10px;
+    padding: 0 20px; font-size: 14px; font-weight: 600; color: var(--figma-text-2);
+  }
+  .s8-hd .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--figma-text-2); flex-shrink: 0; }
+  .s8-old .s8-hr { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s8-new .s8-hr { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s8-body { padding: 14px 20px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .s8-body.tight { gap: 8px; }
+  .s8-li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--figma-text-2); }
+  .s8-li .dot { width: 4px; height: 4px; border-radius: 2px; flex-shrink: 0; background: #999; }
+  .s8-li .dot.dark { background: var(--figma-text-2); }
+  .s8-warn {
+    margin-top: 4px; background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 6px;
+    padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--figma-text-2); line-height: 1.4;
+  }
+  .s8-rules-label { font-size: 12px; font-weight: 600; color: var(--figma-text-2); }
+  .s8-cap { font-size: 12px; font-weight: 500; color: var(--figma-text-2); margin: 4px 0 0 0; }
+  .s8-skill-row {
+    display: inline-flex; align-items: center; gap: 10px; background: var(--figma-surface);
+    border: 1px solid var(--figma-border); border-radius: 6px; padding: 7px 12px; width: fit-content; max-width: 100%;
+  }
+  .s8-skill-row.em { border-color: var(--figma-text-2); }
+  .s8-skill-row .nm { font-size: 13px; font-weight: 500; color: var(--figma-text); }
+  .s8-skill-row .badge {
+    background: var(--figma-surface); border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .s8-skill-plain {
+    display: inline-block; background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 6px;
+    padding: 7px 12px; font-size: 13px; font-weight: 500; color: var(--figma-text-muted); width: fit-content;
+  }
+  .s8-ok {
+    margin-top: 4px; background: var(--figma-surface); border-radius: 6px; padding: 8px 12px;
+    font-size: 13px; font-weight: 600; color: var(--figma-text-2);
+  }
+
+  /* ================= Slide 09 · 7大架构优势 (Figma 210:1160) ================= */
+  .s9-stack {
+    position: absolute; top: 218px; left: 120px; width: 1200px;
+    display: flex; flex-direction: column; gap: 30px;
+  }
+  /* 两列 580 行：稿为 justify-between，中间留白 40px；勿加 gap 否则会挤乱 */
+  .s9-row { display: flex; flex-direction: row; justify-content: space-between; align-items: stretch; width: 100%; }
+  .s9-row3 { display: flex; flex-direction: row; gap: 30px; align-items: stretch; }
+  .s9-card {
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; height: 140px; box-sizing: border-box;
+  }
+  .s9-card.s9-w580 { width: 580px; }
+  .s9-card.s9-w380 { width: 380px; }
+  .s9-cbar { height: 3px; background: var(--figma-text-2); flex-shrink: 0; }
+  .s9-chd {
+    display: flex; flex-direction: row; align-items: center; gap: 10px;
+    height: 50px; padding: 12px 16px 0; box-sizing: border-box; flex-shrink: 0;
+  }
+  .s9-bad {
+    background: var(--figma-surface); border-radius: 5px; padding: 3px 8px; font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .s9-ttl { font-size: 15px; font-weight: 600; color: var(--figma-text); }
+  .s9-cbd { padding: 8px 16px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .s9-line { display: flex; flex-direction: row; align-items: center; gap: 6px; }
+  .s9-mini { background: var(--figma-surface); border-radius: 3px; padding: 2px 5px; font-size: 10px; font-weight: 500; color: var(--figma-text-2); flex-shrink: 0; }
+  .s9-told { font-size: 12px; font-weight: 400; color: #999; line-height: normal; }
+  .s9-card.s9-w580 .s9-told { max-width: 520px; }
+  .s9-card.s9-w380 .s9-told { max-width: 320px; }
+  .s9-tnew { font-size: 12px; font-weight: 500; color: var(--figma-text); line-height: normal; }
+  .s9-card.s9-w580 .s9-tnew { max-width: 520px; }
+  .s9-card.s9-w380 .s9-tnew { max-width: 320px; }
+
+  /* ================= Slide 10 · design-selfcheck 概述 (Figma 210:1276) ================= */
+  .s10-row {
+    position: absolute; top: 220px; left: 120px; width: 1200px; height: 468px;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: stretch;
+  }
+  .s10-left { width: 583px; display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
+  .s10-lcard {
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .s10-lcard.s10-lh228 { height: 228px; }
+  .s10-lcard.s10-lh230 { height: 230px; }
+  .s10-lhead { display: flex; align-items: center; padding: 0 20px; font-size: 13px; font-weight: 600; color: var(--figma-text-2); letter-spacing: 0.2px; flex-shrink: 0; }
+  .s10-lcard.s10-lh228 .s10-lhead { height: 44px; background: var(--figma-surface); }
+  .s10-lcard.s10-lh230 .s10-lhead { height: 46px; background: #f8f8f8; }
+  .s10-lhr { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s10-lrow {
+    height: 60px; flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 12px;
+    padding: 0 20px; box-sizing: border-box;
+  }
+  .s10-lrow .s10-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--figma-text-2); flex-shrink: 0;
+  }
+  .s10-lrow p { margin: 0; font-size: 13px; line-height: 1.35; max-width: 570px; }
+  .s10-lcard.s10-lh228 .s10-lrow p { color: var(--figma-text-2); font-weight: 400; }
+  .s10-lcard.s10-lh230 .s10-lrow p { color: var(--figma-text); font-weight: 400; }
+  .s10-rbar { height: 4px; background: var(--figma-text-2); flex-shrink: 0; width: 100%; }
+  .s10-right {
+    width: 560px; height: 468px; flex-shrink: 0; background: var(--figma-white);
+    border: 1px solid var(--figma-border); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .s10-right .hd {
+    padding: 16px 20px 8px; border-bottom: 1px solid var(--figma-border);
+    display: flex; flex-direction: column; gap: 4px; height: 74px; box-sizing: border-box; flex-shrink: 0;
+  }
+  .s10-right .hd .cat { font-size: 11px; font-weight: 600; color: var(--figma-text-muted); letter-spacing: 0.3px; }
+  .s10-right .hd .nm { font-size: 18px; font-weight: 500; color: var(--figma-text); }
+  .s10-right .s10-rhr { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s10-right .tr {
+    display: flex; flex-direction: row; align-items: center; height: 68px; padding: 0 20px;
+    box-sizing: border-box; flex-shrink: 0;
+  }
+  .s10-right .tr .k { width: 140px; flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--figma-text-muted); }
+  .s10-right .tr .v { flex: 1; font-size: 13px; font-weight: 400; color: var(--figma-text); max-width: 390px; line-height: 1.35; }
+
+  /* ================= Slide 11 · 4阶段执行流程 (Figma 211:1160) ================= */
+  .s11-wrap { position: absolute; top: 222px; left: 120px; width: 1200px; height: 460px; }
+  .s11-col {
+    position: absolute; top: 0; width: 270px; height: 460px;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .s11-col.s11-c1 { left: 0; }
+  .s11-col.s11-c2 { left: 310px; }
+  .s11-col.s11-c3 { left: 620px; }
+  .s11-col.s11-c4 { left: 930px; }
+  .s11-bar { height: 4px; background: var(--figma-text-2); flex-shrink: 0; }
+  .s11-hd {
+    flex-shrink: 0; height: 108px; padding: 14px 16px 10px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 4px; justify-content: flex-start;
+  }
+  .s11-hd .ph {
+    align-self: flex-start; background: var(--figma-surface); border-radius: 4px;
+    padding: 3px 8px; font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .s11-hd .title { font-size: 16px; font-weight: 500; color: var(--figma-text); }
+  .s11-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .s11-body { padding: 14px 16px; flex: 1; overflow: hidden; }
+  .s11-body .s11-ul {
+    margin: 0; padding-left: 18px; font-size: 12px; font-weight: 400; color: var(--figma-text-2);
+    line-height: 18px; list-style-type: disc;
+  }
+  .s11-body .s11-ul li { margin: 0; padding: 0; }
+  .s11-body .s11-ul li + li { margin-top: 10px; }
+  .s11-arrow {
+    position: absolute; z-index: 2; top: 220px; font-size: 20px; font-weight: 500; color: var(--figma-text-muted);
+  }
+  .s11-arrow.a1 { left: 278px; }
+  .s11-arrow.a2 { left: 588px; }
+  .s11-arrow.a3 { left: 898px; }
+
+  /* ================= Slide 12 · 写作要点 01-03 (Figma 211:1245) ================= */
+  .slide[data-i="12"] .s12-wrap {
+    position: absolute; top: 218px; left: 120px; width: 1200px;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: stretch;
+  }
+  .slide[data-i="12"] .s12-card {
+    width: 360px; height: 460px; flex-shrink: 0;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .slide[data-i="12"] .s12-bar { height: 4px; background: var(--figma-text-2); flex-shrink: 0; }
+  .slide[data-i="12"] .s12-head {
+    flex-shrink: 0; height: 108px; padding: 14px 16px 10px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 4px; align-items: flex-start;
+  }
+  .slide[data-i="12"] .s12-badge {
+    background: var(--figma-surface); border-radius: 4px; padding: 3px 8px;
+    font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .slide[data-i="12"] .s12-title { font-size: 16px; font-weight: 500; color: var(--figma-text); }
+  .slide[data-i="12"] .s12-sub { font-size: 12px; font-weight: 400; color: var(--figma-text-muted); line-height: normal; max-width: 328px; }
+  .slide[data-i="12"] .s12-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .slide[data-i="12"] .s12-body {
+    flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+  }
+  .slide[data-i="12"] .s12-lbl {
+    font-size: 10px; font-weight: 600; color: var(--figma-text-muted); letter-spacing: 0.5px; line-height: normal;
+  }
+  .slide[data-i="12"] .s12-pain {
+    background: var(--figma-surface); border-radius: 6px; padding: 8px 10px;
+    font-size: 12px; font-weight: 400; color: var(--figma-text-2); line-height: 18px; max-width: 308px;
+  }
+  .slide[data-i="12"] .s12-main {
+    font-size: 12px; font-weight: 400; color: var(--figma-text); line-height: 18px; max-width: 328px;
+  }
+  .slide[data-i="12"] .s12-tip {
+    background: var(--figma-surface); border-radius: 6px; padding: 8px 10px;
+    font-size: 12px; font-weight: 500; color: var(--figma-text-2); line-height: 18px; max-width: 308px;
+  }
+
+  /* ================= Slide 13 · 写作要点 04-07 (Figma 214:1160) ================= */
+  .slide[data-i="13"] .s13-wrap {
+    position: absolute; top: 218px; left: 120px; width: 1200px;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: stretch;
+  }
+  .slide[data-i="13"] .s13-card {
+    width: 270px; height: 460px; flex-shrink: 0;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .slide[data-i="13"] .s13-bar { height: 4px; background: var(--figma-text-2); flex-shrink: 0; }
+  .slide[data-i="13"] .s13-head {
+    flex-shrink: 0; height: 108px; padding: 14px 14px 10px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 4px; align-items: flex-start;
+  }
+  .slide[data-i="13"] .s13-badge {
+    background: var(--figma-surface); border-radius: 4px; padding: 3px 8px;
+    font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .slide[data-i="13"] .s13-title { font-size: 15px; font-weight: 500; color: var(--figma-text); }
+  .slide[data-i="13"] .s13-sub { font-size: 11px; font-weight: 400; color: var(--figma-text-muted); line-height: normal; max-width: 242px; }
+  .slide[data-i="13"] .s13-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .slide[data-i="13"] .s13-body {
+    flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+  }
+  .slide[data-i="13"] .s13-lbl {
+    font-size: 10px; font-weight: 600; color: var(--figma-text-muted); letter-spacing: 0.5px; line-height: normal;
+  }
+  .slide[data-i="13"] .s13-pain {
+    background: var(--figma-surface); border-radius: 5px; padding: 7px 10px;
+    font-size: 11px; font-weight: 400; color: var(--figma-text-2); line-height: 17px; max-width: 222px;
+  }
+  .slide[data-i="13"] .s13-main {
+    font-size: 11px; font-weight: 400; color: var(--figma-text); line-height: 17px; max-width: 242px;
+  }
+  .slide[data-i="13"] .s13-tip {
+    background: var(--figma-surface); border-radius: 5px; padding: 7px 10px;
+    font-size: 11px; font-weight: 500; color: var(--figma-text-2); line-height: 17px; max-width: 222px;
+  }
+
+  /* ================= Slide 12/13 · 写作要点 ================= */
+  .pts-wrap { position:absolute; top:218px; left:120px; width: 1200px; display:flex; gap: 30px; }
+  .pts-col { flex:1; background:#fff; border:1px solid var(--figma-border); border-radius:10px; padding: 20px; border-top: 3px solid #c6b47b;}
+  .pts-col .tag { display:inline-block; background:#111; color:#fff; padding: 3px 10px; border-radius:10px; font-size: 11px;}
+  .pts-col .tl { font-size: 17px; font-weight:700; margin: 10px 0 4px 0; color:#111;}
+  .pts-col .st { font-size: 12px; color:#888; margin-bottom: 14px;}
+  .pts-col .lbl { font-size: 11px; color:#aa1f2b; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-top: 12px;}
+  .pts-col .pain { background:#fff4f3; border:1px solid #f0c9c5; padding:10px 12px; border-radius: 6px; font-size:12.5px; color:#8a3c3a; margin-top: 6px;}
+  .pts-col .key { font-size: 11px; color:#3a6a2a; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-top: 12px;}
+  .pts-col .body { font-size: 12.5px; line-height:1.65; color:#333; margin-top: 6px;}
+  .pts-col .tip { background:#f2f7ec; border:1px solid #c8dcb8; padding:10px 12px; border-radius: 6px; font-size:12.5px; color:#355a23; margin-top: 12px;}
+
+  /* ================= Slide 14 · SKILL.md 结构 (Figma 215:1160) ================= */
+  .slide[data-i="14"] .s14-row {
+    position: absolute; top: 220px; left: 120px; width: 1200px;
+    display: flex; flex-direction: row; gap: 21px; align-items: stretch;
+  }
+  .slide[data-i="14"] .s14-card {
+    width: 386px; min-height: 262px; flex-shrink: 0;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    padding: 24px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .slide[data-i="14"] .s14-card .tag {
+    align-self: flex-start; background: var(--figma-surface); border-radius: 4px;
+    padding: 3px 8px; font-size: 10px; font-weight: 500; color: var(--figma-text-muted);
+  }
+  .slide[data-i="14"] .s14-tline {
+    display: flex; flex-direction: row; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .slide[data-i="14"] .s14-tline .num { font-size: 22px; font-weight: 700; color: var(--figma-text); line-height: normal; }
+  .slide[data-i="14"] .s14-tline .name { font-size: 22px; font-weight: 600; color: var(--figma-text); line-height: normal; }
+  .slide[data-i="14"] .s14-tline .opt { font-size: 14px; font-weight: 400; color: var(--figma-text-muted); line-height: normal; }
+  .slide[data-i="14"] .s14-card .d {
+    font-size: 13px; font-weight: 400; color: var(--figma-text-2); line-height: 20px; margin: 0;
+  }
+  .slide[data-i="14"] .s14-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; width: 100%; }
+  .slide[data-i="14"] .s14-card .s14-ul {
+    margin: 0; padding-left: 18px; font-size: 12px; font-weight: 400; color: var(--figma-text-2);
+    line-height: 20px; list-style-type: disc;
+  }
+  .slide[data-i="14"] .s14-card .s14-ul li { margin: 0; padding: 0; }
+  .slide[data-i="14"] .s14-card .s14-ul li + li { margin-top: 10px; }
+  .slide[data-i="14"] .s14-foot {
+    position: absolute; top: 515px; left: 120px; width: 1200px; box-sizing: border-box;
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 10px;
+    padding: 24px 60px 24px 40px; display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+  }
+  .slide[data-i="14"] .s14-foot .s14-fl { max-width: 420px; display: flex; flex-direction: column; gap: 6px; }
+  .slide[data-i="14"] .s14-foot .s14-ftag {
+    align-self: flex-start; background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 4px;
+    padding: 3px 8px; font-size: 10px; font-weight: 500; color: var(--figma-text-muted);
+  }
+  .slide[data-i="14"] .s14-foot .s14-ft { font-size: 18px; font-weight: 600; color: var(--figma-text); line-height: normal; }
+  .slide[data-i="14"] .s14-foot .s14-fd { font-size: 13px; font-weight: 400; color: var(--figma-text-2); line-height: 20px; max-width: 420px; }
+  .slide[data-i="14"] .s14-tree {
+    margin: 0; padding: 0; border: 0; background: transparent;
+    font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    font-size: 12px; font-weight: 400; line-height: normal; color: var(--figma-text-2);
+    white-space: pre; flex-shrink: 0;
+  }
+  .slide[data-i="14"] .s14-tree .root { color: var(--figma-text); }
+
+  /* ================= Slide 15 · Description 三要则 (Figma 215:1257) ================= */
+  .slide[data-i="15"] .s15-wrap {
+    position: absolute; top: 218px; left: 120px; width: 1200px;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: stretch;
+  }
+  .slide[data-i="15"] .s15-card {
+    width: 380px; height: 468px; flex-shrink: 0;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .slide[data-i="15"] .s15-bar { height: 4px; background: var(--figma-text-2); flex-shrink: 0; }
+  .slide[data-i="15"] .s15-head {
+    flex-shrink: 0; height: 108px; padding: 14px 20px 10px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 4px; align-items: flex-start;
+  }
+  .slide[data-i="15"] .s15-badge {
+    background: var(--figma-surface); border-radius: 4px; padding: 3px 8px;
+    font-size: 11px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .slide[data-i="15"] .s15-title { font-size: 17px; font-weight: 500; color: var(--figma-text); }
+  .slide[data-i="15"] .s15-sub { font-size: 12px; font-weight: 400; color: var(--figma-text-muted); line-height: normal; }
+  .slide[data-i="15"] .s15-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .slide[data-i="15"] .s15-body {
+    flex: 1; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+  }
+  .slide[data-i="15"] .s15-lbl {
+    font-size: 10px; font-weight: 600; color: var(--figma-text-2); letter-spacing: 0.4px; line-height: normal;
+  }
+  .slide[data-i="15"] .s15-box {
+    background: var(--figma-surface); border-radius: 6px; padding: 10px 12px;
+    font-size: 13px; font-weight: 400; line-height: 20px; color: var(--figma-text-2);
+  }
+  .slide[data-i="15"] .s15-box.s15-ok { color: var(--figma-text); }
+
+  /* ================= Slide 16 · 4 种内容模式 (Figma 215:1312) ================= */
+  .slide[data-i="16"] .s16-grid {
+    position: absolute; top: 220px; left: 120px; width: 1200px;
+    display: grid; grid-template-columns: 580px 580px; grid-template-rows: 250px 250px;
+    gap: 20px 40px;
+  }
+  .slide[data-i="16"] .s16-card {
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; height: 250px;
+  }
+  .slide[data-i="16"] .s16-bar { height: 4px; background: var(--figma-text-2); flex-shrink: 0; }
+  .slide[data-i="16"] .s16-hd {
+    flex-shrink: 0; height: 52px; padding: 12px 20px 8px; box-sizing: border-box;
+    display: flex; flex-direction: row; align-items: center; gap: 10px;
+  }
+  .slide[data-i="16"] .s16-hd .zh { font-size: 16px; font-weight: 500; color: var(--figma-text); }
+  .slide[data-i="16"] .s16-hd .en { font-size: 12px; font-weight: 400; color: var(--figma-text-muted); }
+  .slide[data-i="16"] .s16-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .slide[data-i="16"] .s16-bd {
+    flex: 1; padding: 12px 20px; display: flex; flex-direction: column; gap: 8px; overflow: hidden;
+  }
+  .slide[data-i="16"] .s16-bd .desc {
+    font-size: 13px; font-weight: 400; color: var(--figma-text-2); line-height: 20px; margin: 0; max-width: 540px;
+  }
+  .slide[data-i="16"] .s16-bd .case {
+    background: var(--figma-surface); border-radius: 6px; padding: 8px 12px;
+    font-size: 12px; font-weight: 400; color: var(--figma-text-2); line-height: 18px; max-width: 516px;
+  }
+  .slide[data-i="16"] .s16-bd .use { font-size: 12px; font-weight: 500; color: var(--figma-text-muted); line-height: normal; }
+
+  /* ================= Slide 17 · 反模式 + 清单 (Figma 216:1160) ================= */
+  .slide[data-i="17"] .s17-row {
+    position: absolute; top: 218px; left: 120px; width: 1200px; display: flex; flex-direction: row;
+    justify-content: space-between; align-items: stretch;
+  }
+  .slide[data-i="17"] .s17-left {
+    width: 680px; height: 468px; flex-shrink: 0;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .slide[data-i="17"] .s17-left .s17-t1 {
+    height: 38px; flex-shrink: 0; background: var(--figma-surface);
+    display: flex; align-items: center; padding: 0 20px;
+    font-size: 13px; font-weight: 600; color: var(--figma-text-2); letter-spacing: 0.2px;
+  }
+  .slide[data-i="17"] .s17-left .s17-th {
+    height: 32px; flex-shrink: 0; background: var(--figma-surface);
+    display: flex; flex-direction: row; align-items: center; padding: 0 20px; box-sizing: border-box;
+  }
+  .slide[data-i="17"] .s17-left .s17-th div {
+    font-size: 11px; font-weight: 600; color: var(--figma-text-muted); letter-spacing: 0.3px;
+  }
+  .slide[data-i="17"] .s17-left .s17-th .c1 { width: 180px; flex-shrink: 0; }
+  .slide[data-i="17"] .s17-left .s17-th .c2 { width: 220px; flex-shrink: 0; }
+  .slide[data-i="17"] .s17-left .s17-th .c3 { width: 240px; flex-shrink: 0; }
+  .slide[data-i="17"] .s17-left .s17-hsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .slide[data-i="17"] .s17-left .s17-hsep + .s17-tr { border-top: none; }
+  .slide[data-i="17"] .s17-left .s17-tr {
+    display: flex; flex-direction: row; align-items: center; min-height: 60px; padding: 0 20px; box-sizing: border-box;
+    border-top: 1px solid var(--figma-border);
+  }
+  .slide[data-i="17"] .s17-left .s17-tr .k {
+    width: 180px; flex-shrink: 0; font-size: 13px; font-weight: 600; color: var(--figma-text);
+  }
+  .slide[data-i="17"] .s17-left .s17-tr .bad {
+    width: 220px; flex-shrink: 0; padding-right: 8px; font-size: 12px; font-weight: 400; color: var(--figma-text-2); line-height: normal;
+  }
+  .slide[data-i="17"] .s17-left .s17-tr .good { width: 240px; flex-shrink: 0; font-size: 12px; font-weight: 400; color: var(--figma-text-2); line-height: normal; }
+
+  .slide[data-i="17"] .s17-right {
+    width: 496px; height: 468px; flex-shrink: 0;
+    background: var(--figma-white); border: 1px solid var(--figma-border); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .slide[data-i="17"] .s17-right .s17-rt {
+    height: 39px; flex-shrink: 0; display: flex; align-items: center; padding: 0 20px;
+    background: #f8f8f8; font-size: 13px; font-weight: 600; color: var(--figma-text-2);
+  }
+  .slide[data-i="17"] .s17-right .s17-rsep { height: 1px; background: var(--figma-border); flex-shrink: 0; }
+  .slide[data-i="17"] .s17-right ul { list-style: none; margin: 0; padding: 0; flex: 1; display: flex; flex-direction: column; }
+  .slide[data-i="17"] .s17-right li {
+    flex: 1; min-height: 0; display: flex; flex-direction: row; align-items: center; gap: 10px;
+    padding: 0 20px; border-top: 1px solid var(--figma-border); font-size: 13px; font-weight: 400; color: var(--figma-text);
+  }
+  .slide[data-i="17"] .s17-right .s17-rsep + ul > li:first-child { border-top: none; }
+  .slide[data-i="17"] .s17-right li::before {
+    content: ""; width: 18px; height: 18px; flex-shrink: 0; border-radius: 4px;
+    background: var(--figma-surface); border: 1px solid var(--figma-text-2); box-sizing: border-box;
+  }
+
+  /* ================= Slide 18 · 总结 (Figma 216:1273) ================= */
+  .slide[data-i="18"] .subtitle { top: 172px; }
+  .slide[data-i="18"] .s18-ch {
+    position: absolute; top: 46px; left: 120px; display: flex; flex-direction: row; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; color: var(--figma-text-2); letter-spacing: 0.3px;
+  }
+  .slide[data-i="18"] .s18-ch::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--figma-text); flex-shrink: 0;
+  }
+  .slide[data-i="18"] .s18-item {
+    position: absolute; left: 120px; width: 1200px; height: 118px;
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 12px;
+    display: flex; flex-direction: row; align-items: stretch; overflow: hidden; box-sizing: border-box;
+  }
+  .slide[data-i="18"] .s18-item.i1 { top: 220px; }
+  .slide[data-i="18"] .s18-item.i2 { top: 348px; }
+  .slide[data-i="18"] .s18-item.i3 { top: 476px; }
+  .slide[data-i="18"] .s18-item .bar {
+    width: 6px; flex-shrink: 0; background: var(--figma-text-2); border-radius: 2px; align-self: stretch;
+  }
+  .slide[data-i="18"] .s18-item .num {
+    width: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 500; color: var(--figma-text-2);
+  }
+  .slide[data-i="18"] .s18-item .body {
+    flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;
+    padding-right: 32px; min-width: 0;
+  }
+  .slide[data-i="18"] .s18-item .body .ht { font-size: 20px; font-weight: 500; color: var(--figma-text); line-height: normal; }
+  .slide[data-i="18"] .s18-item .body .desc {
+    font-size: 14px; font-weight: 400; color: var(--figma-text-2); line-height: 20px; margin: 0; max-width: 1040px;
+  }
+  .slide[data-i="18"] .s18-try {
+    position: absolute; left: 120px; top: 612px; width: 1200px; height: 98px; box-sizing: border-box;
+    background: var(--figma-surface); border: 1px solid var(--figma-border); border-radius: 10px;
+    padding: 0 24px; display: flex; flex-direction: row; align-items: center; gap: 14px;
+  }
+  .slide[data-i="18"] .s18-try::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--figma-text-2); flex-shrink: 0;
+  }
+  .slide[data-i="18"] .s18-try p {
+    margin: 0; font-size: 14px; font-weight: 400; color: var(--figma-text-2); line-height: normal; max-width: 1120px;
+  }
+
+  /* ==================== Controls（悬浮在画布之上；有交互时展开，3 秒无交互则收起） ==================== */
+  .controls-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .controls-dock .controls {
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: transform 0.28s ease;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+  }
+  .controls-dock.controls-dock--idle .controls {
+    transform: translateY(calc(100% + 16px));
+    pointer-events: none;
+  }
+  .controls {
+    width: 100%; max-width: 1440px;
+    background: #16161a;
+    border-radius: 12px;
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 16px;
+    color: #e6e6e6;
+  }
+  .btn {
+    background: rgba(255,255,255,0.08);
+    color: #e6e6e6;
+    border: 0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { background: rgba(255,255,255,0.16);}
+  .btn.primary { background:#ffffff; color:#111;}
+  .btn.primary:hover { background:#e7e7e7;}
+  .progress {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow:hidden;
+  }
+  .progress .bar { height: 100%; background:#c6b47b; width: 0; transition: width 0.15s linear; }
+  .time { font-size: 12px; color:#a0a0a0; min-width: 90px; text-align:right; font-variant-numeric: tabular-nums;}
+  .pageind { font-size: 13px; color:#a0a0a0; font-variant-numeric: tabular-nums;}
+  .sep { width: 1px; height: 22px; background:rgba(255,255,255,0.12);}
+  .autoplay-label { font-size: 12px; color:#a0a0a0; display:flex; align-items:center; gap:6px; cursor:pointer;}
+
+  /* Thumbnails drawer（须盖在悬浮操作栏之上） */
+  .drawer {
+    position: fixed; inset: 0; background:rgba(0,0,0,0.75); display:none; z-index: 2000; padding: 40px;
+    overflow:auto;
+  }
+  .drawer.open { display:block;}
+  .drawer .inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;}
+  .thumb {
+    background: var(--figma-white); border-radius: 6px; overflow:hidden; cursor:pointer;
+    border: 2px solid transparent; position:relative; aspect-ratio: 1440/810;
+    display:flex; flex-direction:column; justify-content:space-between; padding: 18px;
+  }
+  .thumb:hover { border-color:#c6b47b;}
+  .thumb.cur { border-color: #fff;}
+  .thumb .n { font-size: 11px; color:#888;}
+  .thumb .t { font-size: 14px; color:#111; font-weight:700; line-height:1.4;}
+  .drawer-close { position: fixed; top: 20px; right: 24px; font-size:28px; color:#fff; cursor:pointer; border:0; background:transparent;}
+
+  /* Script panel */
+  .script-panel {
+    position: absolute;
+    bottom: 16px; left: 20px; right: 20px;
+    background: rgba(13,13,15,0.84); backdrop-filter: blur(8px);
+    color:#e6e6e6; border-radius: 10px; padding: 14px 20px;
+    font-size: 14px; line-height: 1.65;
+    max-height: 33%;
+    overflow-y: auto;
+    transform: translateY(calc(100% + 30px));
+    transition: transform 0.35s ease;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .script-panel.open { transform: translateY(0); }
+  .script-panel h4 { font-size: 12px; color:#c6b47b; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.1em;}
+
+  /* Responsive footer hint */
+  @media (max-width: 900px){
+    body { padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));}
+    .controls { flex-wrap: wrap; gap: 10px; padding: 10px 14px;}
+    .time { min-width: auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage-wrapper">
+  <div class="stage" id="stage">
+    <div class="canvas" id="canvas">
+      <!-- ============================ Slide 01 封面 ============================ -->
+      <section class="slide active" data-i="1">
+        <div class="cover-tags">
+          <div class="cover-tag">概念原理</div>
+          <div class="cover-tag">工具对比</div>
+          <div class="cover-tag">架构优势</div>
+          <div class="cover-tag">实操规范</div>
+        </div>
+        <div class="cover-title">Skill 实践指南</div>
+        <div class="cover-sub">涵盖 Skill 的运作机制、三类工具的差异化应用、Skills+Rules 架构的核心优势，以及 SKILL.md 编写规范的完整指引</div>
+        <div class="cover-author">vertu.huang</div>
+        <div class="page-num">01 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 02 目录 ============================ -->
+      <section class="slide" data-i="2">
+        <h1 class="toc-title">目录</h1>
+        <div class="toc-card" style="top:188px;">
+          <div class="bar"></div>
+          <div class="toc-num">01</div>
+          <div class="toc-main"><div class="name">AI 工作机制与上下文工程</div><div class="desc">上下文窗口构成 · 上下文工程六大核心概念 · Skill 的本质定义</div></div>
+        </div>
+        <div class="toc-card" style="top:296px;">
+          <div class="bar"></div>
+          <div class="toc-num">02</div>
+          <div class="toc-main"><div class="name">三类工具：Rules / Skills / Hooks</div><div class="desc">定义与类比 · 五维度属性对比 · 典型场景 · 应用决策</div></div>
+        </div>
+        <div class="toc-card" style="top:404px;">
+          <div class="bar"></div>
+          <div class="toc-num">03</div>
+          <div class="toc-main"><div class="name">Skills+Rules 架构优势</div><div class="desc">新旧方案对比 · 七项核心优势</div></div>
+        </div>
+        <div class="toc-card" style="top:512px;">
+          <div class="bar"></div>
+          <div class="toc-num">04</div>
+          <div class="toc-main"><div class="name">案例解析：design-selfcheck</div><div class="desc">概述 · 四阶段执行流程 · 七个写作要点逐一拆解</div></div>
+        </div>
+        <div class="toc-card" style="top:620px;">
+          <div class="bar"></div>
+          <div class="toc-num">05</div>
+          <div class="toc-main"><div class="name">编写规范与实操技巧</div><div class="desc">SKILL.md 结构解剖 · Description 要则 · 内容模式 · 常见缺陷与检查清单</div></div>
+        </div>
+        <div class="page-num">02 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 03 AI 工作机制 ============================ -->
+      <section class="slide" data-i="3">
+        <div class="chapter-tag">第 01 章 · AI 工作机制与上下文工程</div>
+        <h1 class="slide-h1">AI 会话窗口</h1>
+        <div class="subtitle">上下文窗口是AI的认知边界</div>
+        <div class="s3-wrap">
+          <div class="s3-inner">
+            <div class="s3-cap">AI 上下文窗口（Context Window）</div>
+            <div class="s3-row">
+              <div class="s3-line1"><span class="zh">系统提示词</span><span class="en">/ System Prompt</span></div>
+              <div class="s3-line2">← Rules 常驻注入</div>
+            </div>
+            <div class="s3-row">
+              <div class="s3-line1"><span class="zh">短期记忆</span><span class="en">/ Short-term Memory</span></div>
+              <div class="s3-line2">当前会话历史</div>
+            </div>
+            <div class="s3-row">
+              <div class="s3-line1"><span class="zh">知识库 / 技能库</span><span class="en">/ Knowledge Base &amp; Skill</span></div>
+              <div class="s3-line2">← Skills 按需注入</div>
+            </div>
+            <div class="s3-row">
+              <div class="s3-line1"><span class="zh">用户输入</span><span class="en">/ User Prompt</span></div>
+              <div class="s3-line2">当前指令与问题</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">03 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 04 上下文工程全景 ============================ -->
+      <section class="slide" data-i="4">
+        <div class="chapter-tag">第 01 章 · AI 工作机制与上下文工程</div>
+        <h1 class="slide-h1">上下文工程</h1>
+        <div class="subtitle">管理AI能看到的全部信息</div>
+
+        <div class="s4-left">
+          <div class="s4-left-title">上下文工程  Context Engineering</div>
+          <div class="s4-left-sub">管理「AI 能看到什么」的整个学科</div>
+          <div class="s4-grid-wrap">
+            <div class="lbl">AI 上下文窗口</div>
+            <div class="s4-grid">
+              <div class="s4-box"><div class="n">系统提示词</div><div class="t">Rules 注入</div></div>
+              <div class="s4-box"><div class="n">短期记忆</div><div class="t">对话历史</div></div>
+              <div class="s4-box"><div class="n">知识库/技能库</div><div class="t">Skills 注入</div></div>
+              <div class="s4-box"><div class="n">用户输入</div><div class="t">当前指令</div></div>
+            </div>
+          </div>
+          <div class="s4-long"><span class="b">长期记忆 / Long-term Memory</span><span class="s">跨会话持久存储，对话开始前注入至系统提示词</span></div>
+        </div>
+
+        <div class="s4-right">
+          <div class="s4-th"><div>概念</div><div>核心定义</div><div>Cursor 实践</div></div>
+          <div class="s4-tr"><div class="k">上下文工程</div><div class="mid">设计并管理「应向 AI 注入什么信息」的总括学科</div><div class="cur">—（总括视角）</div></div>
+          <div class="s4-tr"><div class="k dot">系统提示词</div><div class="mid">对话前由平台注入，定义角色、限制与风格</div><div class="cur">Rules 常驻于此</div></div>
+          <div class="s4-tr"><div class="k dot">短期记忆</div><div class="mid">当前会话的对话历史，会话结束后消失</div><div class="cur">内置机制</div></div>
+          <div class="s4-tr"><div class="k dot">知识库 / 技能库</div><div class="mid">外部文档按需检索后动态注入，即 RAG 模式</div><div class="cur">Skills 加载至此</div></div>
+          <div class="s4-tr"><div class="k dot">长期记忆</div><div class="mid">跨会话持久的偏好、历史摘要，存于数据库</div><div class="cur">内置机制</div></div>
+          <div class="s4-tr"><div class="k dot">Hooks</div><div class="mid">系统脚本执行器，完全超出上下文工程范畴</div><div class="cur">独立系统层工具</div></div>
+        </div>
+
+        <div class="s4-foot">
+          <div class="s4-foot-inner">
+            <span class="t">Hooks — 完全超越上下文工程范畴</span>
+            <span class="d">系统层脚本执行器，AI 无法感知其存在；属于操作系统层，而非上下文工程</span>
+          </div>
+        </div>
+        <div class="page-num">04 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 05 Skill 本质定义 ============================ -->
+      <section class="slide" data-i="5">
+        <div class="chapter-tag">第 01 章 · AI 工作机制与上下文工程</div>
+        <h1 class="slide-h1">Skill 的本质</h1>
+        <div class="subtitle">按需注入的可复用的AI工作流程文档</div>
+
+        <div class="s5-def">
+          <div class="t">Skill 的完整定义</div>
+          <p>Skill 是存储于 .md 文件的工作流程文档，包含角色定义、执行流程与输出规范三大要素。任务触发时按需注入到 AI 的上下文窗口，为其提供系统性的专业执行指导。</p>
+        </div>
+
+        <div class="s5-features">
+          <div class="s5-feat">
+            <span class="num">01</span>
+            <div class="body">
+              <div class="h">持久化存储</div>
+              <div class="d">内容一次编写，永久有效。无需在每次会话中重新声明任务要求。</div>
+            </div>
+          </div>
+          <div class="s5-feat">
+            <span class="num">02</span>
+            <div class="body">
+              <div class="h">按需注入</div>
+              <div class="d">Skill 仅在相关任务触发时加载至上下文窗口，不常驻内存，制造最佳 Token 效率。</div>
+            </div>
+          </div>
+          <div class="s5-feat">
+            <span class="num">03</span>
+            <div class="body">
+              <div class="h">可复用与可共享</div>
+              <div class="d">单个 Skill 可被个人、团队、跨项目共享复用，也支持版本控制与独立迭代。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s5-right">
+          <div class="s5-r-title">「Skill」 与「临时提示词」的核心差异</div>
+          <div class="s5-r-head"><span>维度</span><span>临时提示词</span><span>Skill</span></div>
+          <div class="s5-r-rule"></div>
+          <div class="s5-r-row">
+            <span class="c1">存在方式</span><span class="c2">仅当次对话内有效</span><span class="c3">持久化存储，永久可用</span>
+          </div>
+          <div class="s5-r-row">
+            <span class="c1">一致性</span><span class="c2">高度依赖操作者描述质量</span><span class="c3">固定流程与输出规范，结果可预期</span>
+          </div>
+          <div class="s5-r-row">
+            <span class="c1">可维护性</span><span class="c2">随时修改困难，内容难管理</span><span class="c3">文件化管理，已版本控制、独立迭代</span>
+          </div>
+          <div class="s5-r-row">
+            <span class="c1">团队协作</span><span class="c2">个人经验难共享</span><span class="c3">文件化共享，团队可统一使用</span>
+          </div>
+          <div class="s5-r-row">
+            <span class="c1">Token 效率</span><span class="c2">每次对话重复录入描述</span><span class="c3">仅在需要时按需注入</span>
+          </div>
+          <div class="s5-r-row">
+            <span class="c1">更新方式</span><span class="c2">执行时手动内嵌描述</span><span class="c3">独立文件单独维护，不影响其他流程</span>
+          </div>
+        </div>
+        <div class="page-num">05 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 06 三类工具对比 ============================ -->
+      <section class="slide" data-i="6">
+        <div class="chapter-tag">第 02 章 · 三类工具：Rules / Skills / Hooks</div>
+        <h1 class="slide-h1">Rules · Skills · Hooks</h1>
+        <div class="subtitle">三者分工不同，配合使用效果最佳，了解差异是选择正确工具的基础</div>
+        <div class="s6-wrap">
+          <div class="s6-col">
+            <div class="s6-bar"></div>
+            <div class="s6-head"><span class="name">Rules</span><span class="sub">行为准则</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">执行主体</span><span class="v">AI 模型本身</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">触发方式</span><span class="v">全局常驻，会话自动生效</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">可靠性</span><span class="v">尽力遵守，少数情况可能被忽略</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">编写格式</span><span class="v">自然语言 Markdown 约定</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">典型应用</span><span class="v">风格约定 / 项目背景 / 语言设定</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">设计系统类比</span><span class="v">Foundation / Token</span></div>
+          </div>
+          <div class="s6-col">
+            <div class="s6-bar"></div>
+            <div class="s6-head"><span class="name">Skills</span><span class="sub">SOP 工作流程</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">执行主体</span><span class="v">AI 按步骤执行</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">触发方式</span><span class="v">关键词触发，按需注入</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">可靠性</span><span class="v">取决于流程清晰度，可优化</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">编写格式</span><span class="v">Markdown 工作流文档（SKILL.md）</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">典型应用</span><span class="v">复杂多步任务 / 可复用工作流</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">设计系统类比</span><span class="v">Component</span></div>
+          </div>
+          <div class="s6-col">
+            <div class="s6-bar"></div>
+            <div class="s6-head"><span class="name">Hooks</span><span class="sub">门禁系统</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">执行主体</span><span class="v">操作系统层脚本引擎</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">触发方式</span><span class="v">事件自动触发（文件保存/代码提交等）</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">可靠性</span><span class="v">强制执行，AI 无法绕过</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">编写格式</span><span class="v">JSON + Shell/系统命令脚本</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">典型应用</span><span class="v">危险拦截 / 预提交训练 / 自动格式化</span></div>
+            <div class="s6-hr"></div>
+            <div class="s6-row"><span class="k">设计系统类比</span><span class="v">Patterns / Interaction</span></div>
+          </div>
+        </div>
+        <div class="page-num">06 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 07 应用决策矩阵 ============================ -->
+      <section class="slide" data-i="7">
+        <div class="chapter-tag">第 02 章 · 三类工具：Rules / Skills / Hooks</div>
+        <h1 class="slide-h1">快速决策：我应该用哪种工具？</h1>
+        <div class="subtitle">根据任务特征选择合适的工具，三者配合使用效果最佳</div>
+        <div class="s7-table">
+          <div class="s7-head"><span>任务场景描述</span><span>推荐工具</span><span>关键原因</span></div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">全局语气风格、回复语言、代码风格约定，希望每次对话均自动生效</div>
+            <div class="c2"><span class="pill">Rules</span></div>
+            <div class="c3">全局常驻，每次对话均需生效，无需主动触发</div>
+          </div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">告知 AI 项目架构背景、团队规范、角色定义</div>
+            <div class="c2"><span class="pill">Rules</span></div>
+            <div class="c3">每次对话均需完整背景，无需重复声明</div>
+          </div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">封装一个多步骤的复杂操作流程，如设计稿自查、提案撰写</div>
+            <div class="c2"><span class="pill">Skills</span></div>
+            <div class="c3">需要顺序执行多阶段流程，只在特定任务时才需要</div>
+          </div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">同一任务类型需多次重复执行，希望每次执行质量一致</div>
+            <div class="c2"><span class="pill">Skills</span></div>
+            <div class="c3">持久化工作流程文档，结果可预期，不依赖个人记忆</div>
+          </div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">危险命令执行前必须强制人工确认，不允许绕过</div>
+            <div class="c2"><span class="pill">Hooks</span></div>
+            <div class="c3">系统层强制拦截，不依赖 AI 理解，不可绕过</div>
+          </div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">文件保存后自动运行格式化、提交前自动扫描敏感信息</div>
+            <div class="c2"><span class="pill">Hooks</span></div>
+            <div class="c3">事件驱动完全自动化，无需主动调用，不经过 AI</div>
+          </div>
+          <div class="s7-hr"></div>
+          <div class="s7-tr">
+            <div class="c1">希望同时具备全局语气约定 + 共享操作流程 + 安全拦截</div>
+            <div class="c2"><span class="pill">Rules + Skills + Hooks</span></div>
+            <div class="c3">三层各司其职，配合使用实现最佳效果</div>
+          </div>
+        </div>
+        <div class="page-num">07 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 08 架构对比 ============================ -->
+      <section class="slide" data-i="8">
+        <div class="chapter-tag">第 03 章  ·  Skills+Rules 架构优势</div>
+        <h1 class="slide-h1">Skills+Rules 架构 vs 全量嵌入系统提示词</h1>
+        <div class="subtitle">新旧调度方式对比</div>
+
+        <div class="s8-old">
+          <div class="s8-hd"><span class="dot"></span>旧方案：全量嵌入系统提示词</div>
+          <div class="s8-hr"></div>
+          <div class="s8-body">
+            <div class="s8-li"><span class="dot"></span>角色定义与行为准则</div>
+            <div class="s8-li"><span class="dot"></span>风格规范</div>
+            <div class="s8-li"><span class="dot"></span>设计稿自查全量流程</div>
+            <div class="s8-li"><span class="dot"></span>需求分析步骤</div>
+            <div class="s8-li"><span class="dot"></span>提案撰写模板</div>
+            <div class="s8-li"><span class="dot"></span>交互规范审查流程</div>
+            <div class="s8-li"><span class="dot"></span>Confluence 搜索模式</div>
+            <div class="s8-li"><span class="dot"></span>业务演示页面生成</div>
+            <div class="s8-li"><span class="dot dark"></span>... 还有 20+ 个工作流程</div>
+            <div class="s8-li"><span class="dot dark"></span>全部内容始终占用上下文窗口</div>
+            <div class="s8-warn">⚠ 每次对话与当前任务无关的内容均被全量录入上下文</div>
+          </div>
+        </div>
+
+        <div class="s8-new">
+          <div class="s8-hd"><span class="dot"></span>新方案：Rules + Skills 架构</div>
+          <div class="s8-hr"></div>
+          <div class="s8-body tight">
+            <div class="s8-rules-label">Rules（系统提示词 · 精简全局规范内容）</div>
+            <div class="s8-li"><span class="dot dark"></span>角色定义与行为准则</div>
+            <div class="s8-li"><span class="dot dark"></span>风格规范</div>
+            <div class="s8-li"><span class="dot dark"></span>……</div>
+            <div class="s8-cap">↓ 任务触发时按需注入对应 Skill</div>
+            <div class="s8-skill-row em"><span class="nm">design-selfcheck</span><span class="badge">当前载入</span></div>
+            <div class="s8-skill-plain">proposal-writing</div>
+            <div class="s8-skill-plain">confluence-search</div>
+            <div class="s8-skill-plain">create-hook</div>
+            <div class="s8-skill-plain">... 20+ 更多 Skills</div>
+            <div class="s8-ok">✓ 当前任务仅加载 1 个 Skill，其余 Skill 不占用上下文窗口</div>
+          </div>
+        </div>
+        <div class="page-num">08 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 09 7大架构优势 ============================ -->
+      <section class="slide" data-i="9">
+        <div class="chapter-tag">第 03 章  ·  Skills+Rules 架构优势</div>
+        <h1 class="slide-h1">Skill+Rules架构优势</h1>
+        <div class="subtitle">为什么要进行架构拆分</div>
+        <div class="s9-stack">
+          <div class="s9-row">
+            <div class="s9-card s9-w580">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">01</span><span class="s9-ttl">Token 节约</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">每次对话全量加载（可能超 100KB）</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">仅加载 1-2 个当前任务所需 Skill</span></div>
+              </div>
+            </div>
+            <div class="s9-card s9-w580">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">02</span><span class="s9-ttl">消除指令干扰</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">多个流程共存导致指令互相干扰</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">每个 Skill 独立封装，上下文洁净隔离</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="s9-row">
+            <div class="s9-card s9-w580">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">03</span><span class="s9-ttl">无限扩展</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">系统提示词容量有上限，越大越混乱</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">新增 Skill 不影响现有内容，可无限扩展</span></div>
+              </div>
+            </div>
+            <div class="s9-card s9-w580">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">04</span><span class="s9-ttl">模块化维护</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">系统提示词中改动一处就可能影响全局</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">独立文件独立迭代，不影响其他 Skill</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="s9-row3">
+            <div class="s9-card s9-w380">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">05</span><span class="s9-ttl">降低幻觉风险</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">上下文信息过多导致 AI 步骤混乱</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">聚焦当前任务，最大限度减少随机输出</span></div>
+              </div>
+            </div>
+            <div class="s9-card s9-w380">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">06</span><span class="s9-ttl">团队协作友好</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">系统提示词属于个人设定，难以按需调整</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">文件化共享，团队共用相同工作流</span></div>
+              </div>
+            </div>
+            <div class="s9-card s9-w380">
+              <div class="s9-cbar"></div>
+              <div class="s9-chd"><span class="s9-bad">07</span><span class="s9-ttl">触发更精准</span></div>
+              <div class="s9-cbd">
+                <div class="s9-line"><span class="s9-mini">旧</span><span class="s9-told">所有流程始终展示，无关任务多次冗余</span></div>
+                <div class="s9-line"><span class="s9-mini">新</span><span class="s9-tnew">关键词明确激活路径，仅加载相关工具</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">09 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 10 design-selfcheck 概述 ============================ -->
+      <section class="slide" data-i="10">
+        <div class="chapter-tag">第 04 章 · 案例解析：design-selfcheck</div>
+        <h1 class="slide-h1">案例实践：design-selfcheck</h1>
+        <div class="subtitle">如何根据实际应用场景撰写一个可用的skill</div>
+        <div class="s10-row">
+          <div class="s10-left">
+            <div class="s10-lcard s10-lh228">
+              <div class="s10-lhead">设计师常见痛点</div>
+              <div class="s10-lhr"></div>
+              <div class="s10-lrow"><span class="s10-dot"></span><p>人工评审或自查，存在较大的人力消耗</p></div>
+              <div class="s10-lhr"></div>
+              <div class="s10-lrow"><span class="s10-dot"></span><p>不同人用 AI 进行设计自查，结果质量参差不齐</p></div>
+              <div class="s10-lhr"></div>
+              <div class="s10-lrow"><span class="s10-dot"></span><p>已确立的评审清单难以让 AI 始终系统执行</p></div>
+            </div>
+            <div class="s10-lcard s10-lh230">
+              <div class="s10-lhead">design-selfcheck 的解决方式</div>
+              <div class="s10-lhr"></div>
+              <div class="s10-lrow"><span class="s10-dot"></span><p>将设计审查工作流 SOP 化，每次触发共执行相同的规范化流程</p></div>
+              <div class="s10-lhr"></div>
+              <div class="s10-lrow"><span class="s10-dot"></span><p>内置阶段性需求收集，确保 AI 应已具备审查所需的业务背景</p></div>
+              <div class="s10-lhr"></div>
+              <div class="s10-lrow"><span class="s10-dot"></span><p>渐进式手册模式确保深层自查清单不占用不必要的上下文</p></div>
+            </div>
+          </div>
+          <div class="s10-right">
+            <div class="s10-rbar"></div>
+            <div class="hd"><div class="cat">Skill 基本信息</div><div class="nm">design-selfcheck</div></div>
+            <div class="s10-rhr"></div>
+            <div class="tr"><div class="k">全称</div><div class="v">设计稿交付前系统性自查工作流程</div></div>
+            <div class="s10-rhr"></div>
+            <div class="tr"><div class="k">适用场景</div><div class="v">电商供应链产品设计自查</div></div>
+            <div class="s10-rhr"></div>
+            <div class="tr"><div class="k">触发方式</div><div class="v">Figma 链接 · 「设计自查」等语言</div></div>
+            <div class="s10-rhr"></div>
+            <div class="tr"><div class="k">文件路径</div><div class="v">~/.cursor/skills/design-selfcheck/</div></div>
+            <div class="s10-rhr"></div>
+            <div class="tr"><div class="k">父级目录</div><div class="v">SKILL.md + reference/checklist/</div></div>
+          </div>
+        </div>
+        <div class="page-num">10 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 11 4 阶段执行流程 ============================ -->
+      <section class="slide" data-i="11">
+        <div class="chapter-tag">第 04 章 · 案例解析：design-selfcheck</div>
+        <h1 class="slide-h1">design-selfcheck 的 4 阶段执行流程</h1>
+        <div class="subtitle">任务触发后，AI 将严格按照此流程进行，每个阶段有明确的输入要求与输出预期</div>
+        <div class="s11-wrap">
+          <div class="s11-arrow a1">→</div>
+          <div class="s11-arrow a2">→</div>
+          <div class="s11-arrow a3">→</div>
+          <div class="s11-col s11-c1">
+            <div class="s11-bar"></div>
+            <div class="s11-hd"><span class="ph">Phase 1</span><div class="title">感知设计稿</div></div>
+            <div class="s11-hsep"></div>
+            <div class="s11-body">
+              <ul class="s11-ul">
+                <li>请就设计稿分享截图或 Figma 链接</li>
+                <li>若无法直接访问 Figma，则基于截图推断（标注推断来源）</li>
+                <li>内置引导话术：「可以分享一下...」</li>
+              </ul>
+            </div>
+          </div>
+          <div class="s11-col s11-c2">
+            <div class="s11-bar"></div>
+            <div class="s11-hd"><span class="ph">Phase 2</span><div class="title">收集需求背景</div></div>
+            <div class="s11-hsep"></div>
+            <div class="s11-body">
+              <ul class="s11-ul">
+                <li>及时收集 PRD / 业务需求文档</li>
+                <li>[强制约束] 在没有足够背景信息时，AI 不得开始分析</li>
+                <li>内置引导对话：方式 A（对话收集）或方式 B（PRD 上传）</li>
+              </ul>
+            </div>
+          </div>
+          <div class="s11-col s11-c3">
+            <div class="s11-bar"></div>
+            <div class="s11-hd"><span class="ph">Phase 3</span><div class="title">执行自查分析</div></div>
+            <div class="s11-hsep"></div>
+            <div class="s11-body">
+              <ul class="s11-ul">
+                <li>按需读取 reference/checklist/ 目录下的清单模块</li>
+                <li>对照设计稿逐一根据模块进行深度分析</li>
+                <li>按缺陷严重程度对问题进行分级</li>
+              </ul>
+            </div>
+          </div>
+          <div class="s11-col s11-c4">
+            <div class="s11-bar"></div>
+            <div class="s11-hd"><span class="ph">Phase 4</span><div class="title">输出自查报告</div></div>
+            <div class="s11-hsep"></div>
+            <div class="s11-body">
+              <ul class="s11-ul">
+                <li>固定五段输出结构：需求摘要、设计推导、缺陷分析、其他方向、综合建议</li>
+                <li>以分析报告方式输出，提升可对照性</li>
+                <li>禁止平铺呈现层级 / 全文平铺</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">11 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 12 写作亮点 01-03 (Figma 211:1245) ============================ -->
+      <section class="slide" data-i="12">
+        <div class="chapter-tag">第 04 章  ·  案例解析：design-selfcheck</div>
+        <h1 class="slide-h1">写作要点：元数据、角色与约束</h1>
+        <div class="subtitle">每个要点均对应“AI 在哪里会犯错”的一种假设，并给出明确的应对策略</div>
+        <div class="s12-wrap">
+          <div class="s12-card">
+            <div class="s12-bar"></div>
+            <div class="s12-head">
+              <span class="s12-badge">要点 01</span>
+              <div class="s12-title">Description 三合一</div>
+              <div class="s12-sub">领域定位 + WHAT + WHEN + 触发词</div>
+            </div>
+            <div class="s12-hsep"></div>
+            <div class="s12-body">
+              <span class="s12-lbl">痛点</span>
+              <div class="s12-pain">如果 Description 模糊，AI 不知该在何时加载此 Skill</div>
+              <span class="s12-lbl">写作要点</span>
+              <div class="s12-main">B 端电商供应链产品（领域）、设计稿系统性自查（WHAT）、Figma 链接或「设计自查」时触发（WHEN + 触发词）</div>
+              <div class="s12-tip">▶ YAML &gt;- 格式支持多行描述，允许 1000+ 字的详尽说明</div>
+            </div>
+          </div>
+          <div class="s12-card">
+            <div class="s12-bar"></div>
+            <div class="s12-head">
+              <span class="s12-badge">要点 02</span>
+              <div class="s12-title">赋予 AI 专业角色</div>
+              <div class="s12-sub">将 AI 定义为领域专家</div>
+            </div>
+            <div class="s12-hsep"></div>
+            <div class="s12-body">
+              <span class="s12-lbl">痛点</span>
+              <div class="s12-pain">AI 以通用对话视角进入判断，而非专家审查视角检出问题</div>
+              <span class="s12-lbl">写作要点</span>
+              <div class="s12-main">「你是一位资深 B 端产品设计审查专家，专注于电商供应链领域，局限在交付前设计稿的系统性审查」</div>
+              <div class="s12-tip">▶ 公式：身份 + 领域 + 责任范围；层层缩小 AI 发挥空间</div>
+            </div>
+          </div>
+          <div class="s12-card">
+            <div class="s12-bar"></div>
+            <div class="s12-head">
+              <span class="s12-badge">要点 03</span>
+              <div class="s12-title">强制约束语言</div>
+              <div class="s12-sub">双重强调，标题 + 正文</div>
+            </div>
+            <div class="s12-hsep"></div>
+            <div class="s12-body">
+              <span class="s12-lbl">痛点</span>
+              <div class="s12-pain">AI 在步骤 Phase 2 缺少需求背景时仍试图开始分析</div>
+              <span class="s12-lbl">写作要点</span>
+              <div class="s12-main">标题标注「不得跳过此步骤」，正文再强调「必须先收集需求背景再执行」。「不得」强于「尽量」，等于确确实实设置程序内的确认标志位</div>
+              <div class="s12-tip">▶ 最高级别：标题强调 + 正文强调 + 术语选择</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">12 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 13 写作亮点 04-07 (Figma 214:1160) ============================ -->
+      <section class="slide" data-i="13">
+        <div class="chapter-tag">第 04 章  ·  案例解析：design-selfcheck</div>
+        <h1 class="slide-h1">写作要点：流程控制、知识库与输出封控</h1>
+        <div class="subtitle">AI 在某个环节上自由发挥的空间越小，Skill 越好用。下列四个要点展示如何控制 AI 的执行边界</div>
+        <div class="s13-wrap">
+          <div class="s13-card">
+            <div class="s13-bar"></div>
+            <div class="s13-head">
+              <span class="s13-badge">要点 04</span>
+              <div class="s13-title">话术模板内嵌</div>
+              <div class="s13-sub">高频语句放入代码块</div>
+            </div>
+            <div class="s13-hsep"></div>
+            <div class="s13-body">
+              <span class="s13-lbl">痛点</span>
+              <div class="s13-pain">AI 话术不一致，引导设计师提供素材的方式容易失控</div>
+              <span class="s13-lbl">写作要点</span>
+              <div class="s13-main">Phase 1/2 各有一段可直接复制的引导话术：「分享设计稿截图或 Figma 链接，或导出 JSON」。模板确保 AI 原文复现而非自行改写。</div>
+              <div class="s13-tip">YAML 代码块内可拾取的话术模板→确保 AI 正确引用</div>
+            </div>
+          </div>
+          <div class="s13-card">
+            <div class="s13-bar"></div>
+            <div class="s13-head">
+              <span class="s13-badge">要点 05</span>
+              <div class="s13-title">条件分支 + 兜底路径</div>
+              <div class="s13-sub">认可输入不符预期的各种情况</div>
+            </div>
+            <div class="s13-hsep"></div>
+            <div class="s13-body">
+              <span class="s13-lbl">痛点</span>
+              <div class="s13-pain">输入不符预期时 AI 会卡住或强行执行</div>
+              <span class="s13-lbl">写作要点</span>
+              <div class="s13-main">Phase 2 设计 A/B 两条路径：对话收集 vs PRD 上传。Phase 1 无法访问 Figma 时有「基于描述推断（标注来源）」兜底路径。</div>
+              <div class="s13-tip">每个 Phase 都考虑「实现不了怎么办」并在 Skill 中写明</div>
+            </div>
+          </div>
+          <div class="s13-card">
+            <div class="s13-bar"></div>
+            <div class="s13-head">
+              <span class="s13-badge">要点 06</span>
+              <div class="s13-title">渐进式知识库</div>
+              <div class="s13-sub">主文件入口 + 子文件细节分离</div>
+            </div>
+            <div class="s13-hsep"></div>
+            <div class="s13-body">
+              <span class="s13-lbl">痛点</span>
+              <div class="s13-pain">将所有清单内嵌 SKILL.md 会导致 Token 爆用</div>
+              <span class="s13-lbl">写作要点</span>
+              <div class="s13-main">主文件仅指向 reference/checklist/README.md 索引；6 个清单模块存放在独立文件中，按需读取。上下文有限时指定最小子集。</div>
+              <div class="s13-tip">主文件 &gt; 500 行就拆分；链接层级不超过一层</div>
+            </div>
+          </div>
+          <div class="s13-card">
+            <div class="s13-bar"></div>
+            <div class="s13-head">
+              <span class="s13-badge">要点 07</span>
+              <div class="s13-title">输出模板 + 禁令封控</div>
+              <div class="s13-sub">正向模板 + 负向禁令双封锁</div>
+            </div>
+            <div class="s13-hsep"></div>
+            <div class="s13-body">
+              <span class="s13-lbl">痛点</span>
+              <div class="s13-pain">输出结构漂移、内部编号暴露给用户</div>
+              <span class="s13-lbl">写作要点</span>
+              <div class="s13-main">固定五段输出：需求背景摘要、设计推导、缺陷分析、其他方向、综合建议。禁令：不得展示清单内部编号、不得平铺平级。</div>
+              <div class="s13-tip">模板正向封锁 + 禁令负向封锁 = AI 输出最可控</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">13 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 14 SKILL.md 结构 (Figma 215:1160) ============================ -->
+      <section class="slide" data-i="14">
+        <div class="chapter-tag">第 05 章  ·  编写规范与实操技巧</div>
+        <h1 class="slide-h1">SKILL.md 结构解剖：三大组成部分</h1>
+        <div class="subtitle">一个完整的 SKILL.md 文件由 Frontmatter、Body 和附加资料三部分构成。Frontmatter 是 AI 判断是否加载的唯一依据</div>
+        <div class="s14-row">
+          <div class="s14-card">
+            <span class="tag">最关键</span>
+            <div class="s14-tline"><span class="num">①</span><span class="name">Frontmatter</span><span class="opt">（必填）</span></div>
+            <p class="d">提供元数据，是 AI 判断是否加载此 Skill 的唯一依据。</p>
+            <div class="s14-hsep"></div>
+            <ul class="s14-ul">
+              <li>name：小写 + 连字符，最多 64 字符</li>
+              <li>description：领域 + WHAT + WHEN + 触发词，第三人称，最多 1024 字</li>
+              <li>不可省略，排序与字段名必须准确</li>
+            </ul>
+          </div>
+          <div class="s14-card">
+            <span class="tag">主体</span>
+            <div class="s14-tline"><span class="num">②</span><span class="name">Body</span><span class="opt">（必需）</span></div>
+            <p class="d">定义 AI 的角色、触发条件与执行流程。</p>
+            <div class="s14-hsep"></div>
+            <ul class="s14-ul">
+              <li>包含角色定义、触发条件、执行流程、注意事项</li>
+              <li>建议主文件保持 &lt; 500 行</li>
+              <li>每个阶段目标明确，无冗余内容</li>
+            </ul>
+          </div>
+          <div class="s14-card">
+            <span class="tag">渐进式</span>
+            <div class="s14-tline"><span class="num">③</span><span class="name">附加资料</span><span class="opt">（可选）</span></div>
+            <p class="d">按需加载的模板、清单与示例，避免主文件臃肿。</p>
+            <div class="s14-hsep"></div>
+            <ul class="s14-ul">
+              <li>大型清单、模板、示例拆到子文件</li>
+              <li>reference/ 目录存放，主文件提供入口链接</li>
+              <li>链接层级不超过一层，避免过深嵌套</li>
+            </ul>
+          </div>
+        </div>
+        <div class="s14-foot">
+          <div class="s14-fl">
+            <span class="s14-ftag">完整目录示例</span>
+            <div class="s14-ft">SKILL.md 目录结构</div>
+            <p class="s14-fd">以 design-selfcheck 为例，展示一个成熟 Skill 的文件组织规范。</p>
+          </div>
+          <pre class="s14-tree"><span class="root">design-selfcheck/</span>
+├── SKILL.md
+└── reference/
+    ├── checklist/
+    │   ├── 01-信息架构.md
+    │   ├── 02-交互逻辑.md
+    │   └── 03-语言规范.md
+    └── README.md</pre>
+        </div>
+        <div class="page-num">14 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 15 Description 写法要则 (Figma 215:1257) ============================ -->
+      <section class="slide" data-i="15">
+        <div class="chapter-tag">第 05 章  ·  编写规范与实操技巧</div>
+        <h1 class="slide-h1">Description 写法三要则：最关键的字段</h1>
+        <div class="subtitle">Description 注入系统提示词，不是对用户说话。写得越具体， AI 加载时机越准确</div>
+        <div class="s15-wrap">
+          <div class="s15-card">
+            <div class="s15-bar"></div>
+            <div class="s15-head">
+              <span class="s15-badge">原则 01</span>
+              <div class="s15-title">第三人称叙述</div>
+              <div class="s15-sub">不是对用户说话，是对系统说明</div>
+            </div>
+            <div class="s15-hsep"></div>
+            <div class="s15-body">
+              <span class="s15-lbl">✖ 不建议写法</span>
+              <div class="s15-box">这个 Skill 帮你审查设计稿存在的问题</div>
+              <span class="s15-lbl">✔ 建议写法</span>
+              <div class="s15-box s15-ok">This skill performs systematic design review for B2B e-commerce product designers before delivery. → 属于系统，第三人称</div>
+            </div>
+          </div>
+          <div class="s15-card">
+            <div class="s15-bar"></div>
+            <div class="s15-head">
+              <span class="s15-badge">原则 02</span>
+              <div class="s15-title">WHAT + WHEN 全包含</div>
+              <div class="s15-sub">同时描述做什么、何时触发</div>
+            </div>
+            <div class="s15-hsep"></div>
+            <div class="s15-body">
+              <span class="s15-lbl">✖ 不建议写法</span>
+              <div class="s15-box">设计自查工具，用于审查设计稿</div>
+              <span class="s15-lbl">✔ 建议写法</span>
+              <div class="s15-box s15-ok">对B端产品师的数字系统设计自查工作流（WHAT），在分享 Figma 链接或提及设计自查时触发（WHEN）</div>
+            </div>
+          </div>
+          <div class="s15-card">
+            <div class="s15-bar"></div>
+            <div class="s15-head">
+              <span class="s15-badge">原则 03</span>
+              <div class="s15-title">包含具体触发词</div>
+              <div class="s15-sub">触发词越具体，加载越准确</div>
+            </div>
+            <div class="s15-hsep"></div>
+            <div class="s15-body">
+              <span class="s15-lbl">✖ 不建议写法</span>
+              <div class="s15-box">用户说要审查设计时触发</div>
+              <span class="s15-lbl">✔ 建议写法</span>
+              <div class="s15-box s15-ok">分享 Figma 链接 / 「帮我查一下设计稿」 / 「进入评审模式」 / 「设计自查」 等语言时触发</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">15 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 16 四种内容模式 (Figma 215:1312) ============================ -->
+      <section class="slide" data-i="16">
+        <div class="chapter-tag">第 05 章  ·  编写规范与实操技巧</div>
+        <h1 class="slide-h1">4 种常用写作模式</h1>
+        <div class="subtitle">根据任务类型选择合适的模式；可组合使用，design-selfcheck 同时应用了这4种模式</div>
+        <div class="s16-grid">
+          <div class="s16-card">
+            <div class="s16-bar"></div>
+            <div class="s16-hd"><span class="zh">模板模式</span><span class="en">Template Pattern</span></div>
+            <div class="s16-hsep"></div>
+            <div class="s16-bd">
+              <p class="desc">提供固定结构的输出格式，确保 AI 每次输出一致</p>
+              <div class="case">应用案例: design-selfcheck Phase 4：五段固定输出模板（需求摘要、设计推导、缺陷分析、其他方向、综合建议）</div>
+              <div class="use">适用：高频执行且输出需要一致性的任务</div>
+            </div>
+          </div>
+          <div class="s16-card">
+            <div class="s16-bar"></div>
+            <div class="s16-hd"><span class="zh">流程模式</span><span class="en">Workflow Pattern</span></div>
+            <div class="s16-hsep"></div>
+            <div class="s16-bd">
+              <p class="desc">将任务拆分为有序执行的多个阶段，每阶段有明确输入与输出</p>
+              <div class="case">应用案例: design-selfcheck Phase 1→4：感知设计稿→收集需求→执行自查→输出报告</div>
+              <div class="use">适用：多步骤复杂任务，顺序不可颠倒</div>
+            </div>
+          </div>
+          <div class="s16-card">
+            <div class="s16-bar"></div>
+            <div class="s16-hd"><span class="zh">条件模式</span><span class="en">Conditional Pattern</span></div>
+            <div class="s16-hsep"></div>
+            <div class="s16-bd">
+              <p class="desc">根据输入条件选择不同路径，包括兜底场景的处理</p>
+              <div class="case">应用案例: design-selfcheck Phase 2：方式 A（对话收集）vs 方式 B（PRD 直接上传）</div>
+              <div class="use">适用：输入来源不确定、或需处理多种异常情况</div>
+            </div>
+          </div>
+          <div class="s16-card">
+            <div class="s16-bar"></div>
+            <div class="s16-hd"><span class="zh">强制约束模式</span><span class="en">Constraint Pattern</span></div>
+            <div class="s16-hsep"></div>
+            <div class="s16-bd">
+              <p class="desc">明确列出 AI 不得做的事项，封锁确切的分析边界</p>
+              <div class="case">应用案例: design-selfcheck 注意事项第 2 条：「严禁在报告中以任何形式出现条目编号（如 "2.3 信息架构"、"P1 必查项" 等），所有结论必须用自然语言直接表达」</div>
+              <div class="use">适用：容易发生漂移或过度发挥的任务</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-num">16 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 17 反模式 + 检查清单 (Figma 216:1160) ============================ -->
+      <section class="slide" data-i="17">
+        <div class="chapter-tag">第 05 章  ·  编写规范与实操技巧</div>
+        <h1 class="slide-h1">常见缺陷 + 交付前自查清单</h1>
+        <div class="subtitle">避开缺陷漏洞与完成自查清单是确保 Skill 质量的两层保障</div>
+        <div class="s17-row">
+          <div class="s17-left">
+            <div class="s17-t1">常见缺陷</div>
+            <div class="s17-th"><div class="c1">举例</div><div class="c2">错误示例</div><div class="c3">正确写法</div></div>
+            <div class="s17-hsep"></div>
+            <div class="s17-tr"><div class="k">选项过多</div><div class="bad">Description 列出 12 个触发场景</div><div class="good">聚焦 3-5 个核心触发词</div></div>
+            <div class="s17-tr"><div class="k">漏写 WHEN</div><div class="bad">This skill reviews design.</div><div class="good">进入审查模式或分享 Figma 链接时触发</div></div>
+            <div class="s17-tr"><div class="k">术语不统一</div><div class="bad">同一 Skill 内 “验证” 和 “检查” 形容同一操作</div><div class="good">全文统一使用“自查”一词</div></div>
+            <div class="s17-tr"><div class="k">Skill 名称模糊</div><div class="bad">design-tool / ai-helper</div><div class="good">design-selfcheck / figma-review</div></div>
+            <div class="s17-tr"><div class="k">与时间绑定</div><div class="bad">文档中写定 “2024 年 Q3 设计规范”</div><div class="good">清除时间点，标注 deprecated 而非封存</div></div>
+            <div class="s17-tr"><div class="k">主文件过长</div><div class="bad">SKILL.md 超过 800 行</div><div class="good">把清单/示例/模板拆到 reference/ 目录</div></div>
+          </div>
+          <div class="s17-right">
+            <div class="s17-rt">交付前自查清单</div>
+            <div class="s17-rsep"></div>
+            <ul>
+              <li>Description 包含领域 + WHAT + WHEN + 触发词</li>
+              <li>采用第三人称叙述，不写“你”</li>
+              <li>SKILL.md 主文件保持 &lt; 500 行</li>
+              <li>术语全文统一，无歧义</li>
+              <li>固定输出模板已定义</li>
+              <li>极端场景有兜底路径</li>
+              <li>清单/示例 &gt; 100 行已拆至 reference/</li>
+              <li>Skill 名称小写连字符，含义明确</li>
+              <li>没有与时间绑定的内容</li>
+              <li>关键步骤均有兜底处理</li>
+            </ul>
+          </div>
+        </div>
+        <div class="page-num">17 / 18</div>
+      </section>
+
+      <!-- ============================ Slide 18 总结 ============================ -->
+      <section class="slide" data-i="18">
+        <div class="s18-ch">结尾  ·  CLOSING</div>
+        <h1 class="slide-h1">今天带走的 3 件事</h1>
+        <div class="subtitle">核心结论与立即可尝试的行动路径</div>
+        <div class="s18-item i1">
+          <div class="bar"></div>
+          <div class="num">01</div>
+          <div class="body">
+            <div class="ht">Skill = 为 AI 编写的 SOP 手册</div>
+            <p class="desc">Skill 本质是一个指导 AI 工作的 Markdown 文档。写好一次，永久可用。</p>
+          </div>
+        </div>
+        <div class="s18-item i2">
+          <div class="bar"></div>
+          <div class="num">02</div>
+          <div class="body">
+            <div class="ht">人人都是 Skill 创作者</div>
+            <p class="desc">按照领域 + WHAT + WHEN + 触发词写好 Description，选一种内容模式，你也可以很快写出一个趁手的 Skill。</p>
+          </div>
+        </div>
+        <div class="s18-item i3">
+          <div class="bar"></div>
+          <div class="num">03</div>
+          <div class="body">
+            <div class="ht">design-selfcheck 用起来</div>
+            <p class="desc">说出「设计自查」或分享 Figma 链接，AI 即会按照 4 个阶段规范执行。</p>
+          </div>
+        </div>
+        <div class="s18-try">
+          <p>立即可尝试：在 Cursor / Codex 中输入「设计自查 + figma link」，观察使用 design-selfcheck 的分析报告质量。然后思考：这个流程是否适合自己的工作场景，有何改进空间？</p>
+        </div>
+        <div class="page-num">18 / 18</div>
+      </section>
+    </div>
+
+    <!-- Script panel (overlay) -->
+    <div class="script-panel" id="scriptPanel">
+      <h4>讲 稿</h4>
+      <p id="scriptText">——</p>
+    </div>
+  </div>
+</div>
+
+<!-- Controls（有交互时显示，3 秒无操作自动隐藏） -->
+<div class="controls-dock controls-dock--idle" id="controlsDock">
+  <div class="controls" inert>
+    <button class="btn primary" id="btnPlay">▶ 播放</button>
+    <button class="btn" id="btnPrev">← 上一页</button>
+    <button class="btn" id="btnNext">下一页 →</button>
+    <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+    <div class="time" id="time">00:00 / 00:00</div>
+    <div class="sep"></div>
+    <label class="autoplay-label"><input type="checkbox" id="chkAuto" checked /> 自动翻页</label>
+    <button class="btn" id="btnScript">讲稿</button>
+    <button class="btn" id="btnThumbs">全览</button>
+    <button class="btn" id="btnFull">⛶</button>
+    <div class="pageind" id="pageind">01 / 18</div>
+  </div>
+</div>
+
+<!-- Audio element -->
+<audio id="audio" preload="auto"></audio>
+
+<!-- Thumbnails drawer -->
+<div class="drawer" id="drawer">
+  <button class="drawer-close" id="drawerClose">✕</button>
+  <div class="inner" id="drawerInner"></div>
+</div>
+
+<script>
+(() => {
+  const TOTAL = 18;
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const titles = [
+    '封面', '目录', 'AI 会话窗口', '上下文工程全景',
+    'Skill 的本质', 'Rules · Skills · Hooks', '快速决策矩阵',
+    '架构对比：旧 vs 新', 'Skill + Rules 架构优势',
+    'design-selfcheck 概述', '4 阶段执行流程',
+    '写作要点 01-03', '写作要点 04-07',
+    'SKILL.md 结构解剖', 'Description 写法三要则',
+    '4 种常用写作模式', '常见缺陷 + 交付前自查清单',
+    '今天带走的 3 件事'
+  ];
+  let scripts = [];
+
+  const audio = document.getElementById('audio');
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('canvas');
+  const controlsDock = document.getElementById('controlsDock');
+  const btnPlay = document.getElementById('btnPlay');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const btnFull = document.getElementById('btnFull');
+  const btnScript = document.getElementById('btnScript');
+  const btnThumbs = document.getElementById('btnThumbs');
+  const chkAuto = document.getElementById('chkAuto');
+  const bar = document.getElementById('bar');
+  const timeEl = document.getElementById('time');
+  const pageind = document.getElementById('pageind');
+  const progress = document.getElementById('progress');
+  const scriptPanel = document.getElementById('scriptPanel');
+  const scriptText = document.getElementById('scriptText');
+  const drawer = document.getElementById('drawer');
+  const drawerInner = document.getElementById('drawerInner');
+  const drawerClose = document.getElementById('drawerClose');
+
+  let current = 1;
+
+  // Load scripts
+  fetch('scripts/scripts.json').then(r => r.json()).then(data => {
+    scripts = data;
+    updateScript();
+  }).catch(() => {
+    scriptText.textContent = '（讲稿加载失败，请使用本地 HTTP 服务器打开：python3 -m http.server）';
+  });
+
+  // Build thumbnails
+  for (let i = 1; i <= TOTAL; i++) {
+    const el = document.createElement('div');
+    el.className = 'thumb';
+    el.innerHTML = `<div class="n">${String(i).padStart(2,'0')} / ${TOTAL}</div><div class="t">${titles[i-1]}</div>`;
+    el.addEventListener('click', () => { goTo(i); drawer.classList.remove('open'); });
+    drawerInner.appendChild(el);
+  }
+
+  function scaleCanvas() {
+    const rect = stage.getBoundingClientRect();
+    const scaleX = rect.width / 1440;
+    const scaleY = rect.height / 810;
+    const s = Math.min(scaleX, scaleY);
+    const tx = (rect.width - 1440 * s) / 2;
+    const ty = (rect.height - 810 * s) / 2;
+    canvas.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+    canvas.style.width = '1440px';
+    canvas.style.height = '810px';
+  }
+
+  /** 任意用户交互时显示底栏，连续 3 秒无任何交互则隐藏 */
+  const CONTROLS_IDLE_MS = 3000;
+  let controlsIdleTimer = null;
+  const controlsBar = controlsDock.querySelector('.controls');
+  function setControlsDockIdle(idle) {
+    controlsDock.classList.toggle('controls-dock--idle', idle);
+    if (idle) controlsBar?.setAttribute('inert', '');
+    else controlsBar?.removeAttribute('inert');
+  }
+  function armControlsIdleTimer() {
+    clearTimeout(controlsIdleTimer);
+    controlsIdleTimer = setTimeout(() => {
+      setControlsDockIdle(true);
+    }, CONTROLS_IDLE_MS);
+  }
+  function onControlsUserActivity() {
+    setControlsDockIdle(false);
+    armControlsIdleTimer();
+  }
+  ['mousemove', 'mousedown', 'keydown', 'wheel', 'touchstart', 'pointerdown'].forEach((type) => {
+    window.addEventListener(type, onControlsUserActivity, { passive: true });
+  });
+  document.addEventListener('scroll', onControlsUserActivity, { passive: true, capture: true });
+  window.addEventListener('resize', () => {
+    scaleCanvas();
+    onControlsUserActivity();
+  });
+  scaleCanvas();
+  document.addEventListener('fullscreenchange', () => {
+    requestAnimationFrame(scaleCanvas);
+  });
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => scaleCanvas()).observe(stage);
+  }
+
+  function goTo(n) {
+    n = Math.max(1, Math.min(TOTAL, n));
+    // load() 会打断当前播放并让元素处于 paused，需在换源前记住是否要续播
+    const resumePlayback = !audio.paused;
+    slides.forEach(s => s.classList.toggle('active', +s.dataset.i === n));
+    current = n;
+    audio.src = `audio/slide-${String(n).padStart(2,'0')}.mp3`;
+    audio.load();
+    pageind.textContent = `${String(n).padStart(2,'0')} / ${TOTAL}`;
+    Array.from(drawerInner.children).forEach((el, idx) => el.classList.toggle('cur', idx+1 === n));
+    bar.style.width = '0%';
+    timeEl.textContent = '00:00 / 00:00';
+    updateScript();
+    if (resumePlayback) {
+      setTimeout(() => {
+        audio.play().catch(() => {});
+      }, 250);
+    }
+  }
+
+  function updateScript() {
+    if (!scripts.length) return;
+    const item = scripts.find(s => s.id === current);
+    if (item) scriptText.textContent = item.script;
+  }
+
+  function togglePlay() {
+    if (audio.paused) audio.play(); else audio.pause();
+  }
+  audio.addEventListener('play', () => { btnPlay.textContent = '⏸ 暂停'; });
+  audio.addEventListener('pause', () => { btnPlay.textContent = '▶ 播放'; });
+  audio.addEventListener('ended', () => {
+    if (chkAuto.checked && current < TOTAL) {
+      goTo(current + 1);
+      setTimeout(() => audio.play(), 250);
+    } else {
+      btnPlay.textContent = '▶ 播放';
+    }
+  });
+  audio.addEventListener('timeupdate', () => {
+    const d = audio.duration || 0;
+    const t = audio.currentTime || 0;
+    bar.style.width = d ? (t/d*100) + '%' : '0%';
+    timeEl.textContent = `${fmt(t)} / ${fmt(d)}`;
+  });
+
+  function fmt(s) {
+    if (!isFinite(s)) return '00:00';
+    const m = Math.floor(s/60), ss = Math.floor(s%60);
+    return String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
+
+  progress.addEventListener('click', e => {
+    const rect = progress.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    if (audio.duration) audio.currentTime = audio.duration * ratio;
+  });
+
+  btnPlay.addEventListener('click', togglePlay);
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+  btnScript.addEventListener('click', () => scriptPanel.classList.toggle('open'));
+  btnThumbs.addEventListener('click', () => drawer.classList.add('open'));
+  drawerClose.addEventListener('click', () => drawer.classList.remove('open'));
+  btnFull.addEventListener('click', () => {
+    if (!document.fullscreenElement) stage.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') goTo(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   goTo(current - 1);
+    if (e.key === 'Escape') { scriptPanel.classList.remove('open'); drawer.classList.remove('open'); }
+  });
+
+  goTo(1);
+})();
+</script>
+</body>
+</html>

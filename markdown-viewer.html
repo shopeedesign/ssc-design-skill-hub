@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown 预览</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-light.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>
+    :root {
+      --bar: #ee4d2d;
+    }
+
+    body {
+      margin: 0;
+      background: #f6f8fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+    }
+
+    .viewer-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 16px;
+      padding: 10px 18px;
+      background: #ffffff;
+      border-bottom: 1px solid #d8dee4;
+      font-size: 13px;
+    }
+
+    .viewer-bar strong {
+      color: #333;
+      word-break: break-all;
+    }
+
+    .viewer-bar a {
+      color: var(--bar);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .viewer-bar a:hover {
+      text-decoration: underline;
+    }
+
+    .viewer-tip {
+      margin: 0;
+      padding: 12px 18px;
+      background: #fff8e6;
+      border-bottom: 1px solid #f5e0a8;
+      color: #5c4a00;
+      font-size: 13px;
+      line-height: 1.55;
+      display: none;
+    }
+
+    .viewer-tip code {
+      background: rgba(0, 0, 0, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .viewer-error {
+      margin: 16px 18px;
+      padding: 14px 16px;
+      background: #ffeaea;
+      border: 1px solid #f5c2c2;
+      border-radius: 8px;
+      color: #8a1f1f;
+      font-size: 14px;
+      display: none;
+    }
+
+    #doc {
+      box-sizing: border-box;
+      max-width: 980px;
+      margin: 12px auto 0;
+      padding: 28px 20px 48px;
+    }
+
+    .markdown-body {
+      background: #fff;
+      border: 1px solid #d8dee4;
+      border-radius: 12px;
+      padding: 28px 32px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    /* 代码块：偏编辑器观感 */
+    .markdown-body pre {
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .markdown-body pre code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    .markdown-body :not(pre) > code {
+      background: #f0f3f6;
+      padding: 0.15em 0.45em;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <header class="viewer-bar">
+    <a href="index.html">← SSC Design Skill Hub</a>
+    <span>|</span>
+    <span>当前文档：<strong id="docName">—</strong></span>
+  </header>
+  <p id="fileTip" class="viewer-tip"></p>
+  <p id="loadError" class="viewer-error"></p>
+  <article id="doc" class="markdown-body"></article>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get("file");
+      const docEl = document.getElementById("doc");
+      const docNameEl = document.getElementById("docName");
+      const tipEl = document.getElementById("fileTip");
+      const errEl = document.getElementById("loadError");
+
+      if (!raw) {
+        errEl.style.display = "block";
+        errEl.textContent = "缺少参数：请在链接中带上 ?file=文档名.md ，或从 Skill Hub 页脚进入。";
+        return;
+      }
+
+      const file = decodeURIComponent(raw);
+      docNameEl.textContent = file;
+
+      if (window.location.protocol === "file:") {
+        tipEl.style.display = "block";
+        tipEl.innerHTML =
+          "当前是 <code>file://</code> 打开方式，浏览器<strong>不允许</strong>读取旁边的 .md，所以看不到正文。<br><br>" +
+          "<strong>做法一（推荐）：</strong>在 Finder 里<strong>双击</strong>同文件夹下的 <code>启动本地预览.command</code>，等自动打开首页后，再从页脚点「Skill 实践指南」或撰写模板链接。<br><br>" +
+          "<strong>做法二：</strong>打开「终端」，先 <code>cd</code> 到本网页所在文件夹（把文件夹拖进终端可自动填入路径），再执行 <code>python3 -m http.server 8765</code>，然后浏览器打开 <code>http://localhost:8765/index.html</code>。";
+      }
+
+      marked.setOptions({
+        gfm: true,
+        breaks: false,
+      });
+
+      const url = new URL(file, window.location.href);
+      fetch(url.href)
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.text();
+        })
+        .then(function (md) {
+          docEl.innerHTML = marked.parse(md);
+          docEl.querySelectorAll("pre code").forEach(function (block) {
+            hljs.highlightElement(block);
+          });
+        })
+        .catch(function () {
+          errEl.style.display = "block";
+          var safeName = file
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+          var msg =
+            "无法读取「" +
+            safeName +
+            "」。若你是直接双击打开的本地文件，请按上方黄条说明启动本地静态服务后再访问。";
+          if (/\.github\.io$/i.test(location.hostname)) {
+            msg +=
+              "<br><br>若在 <strong>GitHub Pages</strong>：请确认仓库 <strong>Settings → Pages</strong> 已启用（一般为 <code>main</code> 分支、<code>/ (root)</code>），且地址栏里 <code>?file=</code> 与仓库内路径一致。也可在 GitHub 仓库中直接打开该 <code>.md</code> 源文件阅读。";
+          }
+          errEl.innerHTML = msg;
+        });
+    })();
+  </script>
+</body>
+</html>
