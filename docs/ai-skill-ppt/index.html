@@ -337,6 +337,45 @@
     flex: 1; width: 250px; font-size: 13px; font-weight: 400; color: var(--figma-text); line-height: normal; max-width: 244px;
   }
 
+  /* Slide 06 — 标题/副标题间距与全片一致（subtitle top 同默认 170px） */
+  .slide[data-i="6"] .subtitle {
+    top: 170px;
+    max-width: 1180px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .slide[data-i="6"] .s6-wrap {
+    top: 238px;
+    height: 444px;
+  }
+  .slide[data-i="6"] .s6-col {
+    height: 444px;
+  }
+  .slide[data-i="6"] .s6-head {
+    height: 56px;
+    flex-shrink: 0;
+    padding: 0 18px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .slide[data-i="6"] .s6-head .name { font-size: 20px; }
+  .slide[data-i="6"] .s6-row {
+    min-height: 52px;
+    align-items: center;
+    padding: 10px 18px;
+    box-sizing: border-box;
+  }
+  .slide[data-i="6"] .s6-row .k {
+    width: 100px;
+    font-size: 11px;
+  }
+  .slide[data-i="6"] .s6-row .v {
+    font-size: 12px;
+    line-height: 1.38;
+    max-width: 258px;
+  }
+
   /* ================= Slide 07 · 应用决策矩阵 (Figma 209:1160) ================= */
   .s7-table {
     position: absolute; top: 218px; left: 120px; width: 1200px; height: 476px;
@@ -1121,55 +1160,55 @@
       <section class="slide" data-i="6">
         <div class="chapter-tag">第 02 章 · 三类工具：Rules / Skills / Hooks</div>
         <h1 class="slide-h1">Rules · Skills · Hooks</h1>
-        <div class="subtitle">三者分工不同，配合使用效果最佳，了解差异是选择正确工具的基础</div>
+        <div class="subtitle">Rules 回答「什么能做」、Skills 回答「怎么做」、Hooks 回答「什么时候做」。三者叠加，让 AI 从被动答疑走向按设计规范主动执行。</div>
         <div class="s6-wrap">
           <div class="s6-col">
             <div class="s6-bar"></div>
-            <div class="s6-head"><span class="name">Rules</span><span class="sub">行为准则</span></div>
+            <div class="s6-head">
+              <span class="name">Rules</span>
+            </div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">执行主体</span><span class="v">AI 模型本身</span></div>
+            <div class="s6-row"><span class="k">核心定位</span><span class="v">约定可做什么、不可做什么，让输出长期对齐团队规范</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">触发方式</span><span class="v">全局常驻，会话自动生效</span></div>
+            <div class="s6-row"><span class="k">执行主体</span><span class="v">AI 模型（软约束，尽力遵守）</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">可靠性</span><span class="v">尽力遵守，少数情况可能被忽略</span></div>
+            <div class="s6-row"><span class="k">生效方式</span><span class="v">写入 Rules / AGENTS.md 等，全局常驻、每轮对话自动引用</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">编写格式</span><span class="v">自然语言 Markdown 约定</span></div>
+            <div class="s6-row"><span class="k">设计场景</span><span class="v">规定 AI 做界面必须跟团队色板、组件库走，不能随手写死一串颜色糊弄过去</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">典型应用</span><span class="v">风格约定 / 项目背景 / 语言设定</span></div>
-            <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">设计系统类比</span><span class="v">Foundation / Token</span></div>
+            <div class="s6-row"><span class="k">形象类比</span><span class="v">Foundation / Token</span></div>
           </div>
           <div class="s6-col">
             <div class="s6-bar"></div>
-            <div class="s6-head"><span class="name">Skills</span><span class="sub">SOP 工作流程</span></div>
+            <div class="s6-head">
+              <span class="name">Skills</span>
+            </div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">执行主体</span><span class="v">AI 按步骤执行</span></div>
+            <div class="s6-row"><span class="k">核心定位</span><span class="v">把「从需求到交付」的多步流程文档化，需要时一键交给 AI 逐步做完</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">触发方式</span><span class="v">关键词触发，按需注入</span></div>
+            <div class="s6-row"><span class="k">执行主体</span><span class="v">AI 按 SKILL.md 流程执行</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">可靠性</span><span class="v">取决于流程清晰度，可优化</span></div>
+            <div class="s6-row"><span class="k">生效方式</span><span class="v">关键词或任务描述匹配时，按需注入上下文</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">编写格式</span><span class="v">Markdown 工作流文档（SKILL.md）</span></div>
+            <div class="s6-row"><span class="k">设计场景</span><span class="v">Figma 还原成页做成 SOP，丢链接后按固定步骤拆稿、对组件、写代码</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">典型应用</span><span class="v">复杂多步任务 / 可复用工作流</span></div>
-            <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">设计系统类比</span><span class="v">Component</span></div>
+            <div class="s6-row"><span class="k">形象类比</span><span class="v">像组件一样可复用的流程块</span></div>
           </div>
           <div class="s6-col">
             <div class="s6-bar"></div>
-            <div class="s6-head"><span class="name">Hooks</span><span class="sub">门禁系统</span></div>
+            <div class="s6-head">
+              <span class="name">Hooks</span>
+            </div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">执行主体</span><span class="v">操作系统层脚本引擎</span></div>
+            <div class="s6-row"><span class="k">核心定位</span><span class="v">在关键动作前后挂脚本，代替「想起来了才查」</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">触发方式</span><span class="v">事件自动触发（文件保存/代码提交等）</span></div>
+            <div class="s6-row"><span class="k">执行主体</span><span class="v">IDE / CLI 脚本（硬约束，AI 无法绕过）</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">可靠性</span><span class="v">强制执行，AI 无法绕过</span></div>
+            <div class="s6-row"><span class="k">生效方式</span><span class="v">挂在常用节点上：开会话、保存、AI 改文件前后等到点自动执行，无需再多点一步</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">编写格式</span><span class="v">JSON + Shell/系统命令脚本</span></div>
+            <div class="s6-row"><span class="k">设计场景</span><span class="v">拉齐最新 Token 与组件说明，少 AI 沿用旧规范</span></div>
             <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">典型应用</span><span class="v">危险拦截 / 预提交训练 / 自动格式化</span></div>
-            <div class="s6-hr"></div>
-            <div class="s6-row"><span class="k">设计系统类比</span><span class="v">Do & Don't</span></div>
+            <div class="s6-row"><span class="k">形象类比</span><span class="v">到点就动 · 自动把关</span></div>
           </div>
         </div>
         <div class="page-num">06 / 18</div>
