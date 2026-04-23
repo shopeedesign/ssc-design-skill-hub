@@ -15,6 +15,9 @@ on:
 jobs:
   sync-public-repo:
     runs-on: ubuntu-latest
+    env:
+      PUBLIC_REPO_DIR: ${{ runner.temp }}/public-repo
+      STAGING_DIR: ${{ runner.temp }}/public-site-staging
 
     steps:
       - name: Check out private source repo
@@ -32,17 +35,18 @@ jobs:
         env:
           GIT_SSH_COMMAND: ssh -i ~/.ssh/public_site_deploy_key -o IdentitiesOnly=yes
         run: |
-          git clone git@github.com:shopeedesign/ssc-design-skill-hub-site.git public-repo
+          git clone git@github.com:shopeedesign/ssc-design-skill-hub-site.git "$PUBLIC_REPO_DIR"
 
       - name: Prepare deployment files
         shell: bash
         run: |
-          mkdir -p staging/assets
-          cp index.html staging/index.html
-          cp markdown-viewer.html staging/markdown-viewer.html
-          cp .nojekyll staging/.nojekyll
-          cp -R assets/. staging/assets/
-          cat > staging/README.md <<'EOF'
+          rm -rf "$STAGING_DIR"
+          mkdir -p "$STAGING_DIR/assets"
+          cp index.html "$STAGING_DIR/index.html"
+          cp markdown-viewer.html "$STAGING_DIR/markdown-viewer.html"
+          cp .nojekyll "$STAGING_DIR/.nojekyll"
+          cp -R assets/. "$STAGING_DIR/assets/"
+          cat > "$STAGING_DIR/README.md" <<'EOF'
           # SSC Design Skill Hub Site
 
           This repository is the public deployment target for the SSC Design Skill Hub static site.
@@ -52,10 +56,10 @@ jobs:
 
       - name: Sync files into public repo
         run: |
-          rsync -av --delete staging/ public-repo/
+          rsync -av --delete --exclude='.git/' "$STAGING_DIR"/ "$PUBLIC_REPO_DIR"/
 
       - name: Commit and push if changed
-        working-directory: public-repo
+        working-directory: ${{ env.PUBLIC_REPO_DIR }}
         env:
           GIT_SSH_COMMAND: ssh -i ~/.ssh/public_site_deploy_key -o IdentitiesOnly=yes
         run: |
