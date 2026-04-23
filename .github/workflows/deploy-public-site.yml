@@ -1,0 +1,72 @@
+name: Deploy Public Site
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - index.html
+      - markdown-viewer.html
+      - assets/**
+      - .nojekyll
+      - .github/workflows/deploy-public-site.yml
+
+jobs:
+  sync-public-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out private source repo
+        uses: actions/checkout@v4
+
+      - name: Set up SSH deploy key
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.PUBLIC_SITE_DEPLOY_KEY }}" > ~/.ssh/public_site_deploy_key
+          chmod 600 ~/.ssh/public_site_deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Clone public deployment repo
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/.ssh/public_site_deploy_key -o IdentitiesOnly=yes
+        run: |
+          git clone git@github.com:shopeedesign/ssc-design-skill-hub-site.git public-repo
+
+      - name: Prepare deployment files
+        shell: bash
+        run: |
+          mkdir -p staging/assets
+          cp index.html staging/index.html
+          cp markdown-viewer.html staging/markdown-viewer.html
+          cp .nojekyll staging/.nojekyll
+          cp -R assets/. staging/assets/
+          cat > staging/README.md <<'EOF'
+          # SSC Design Skill Hub Site
+
+          This repository is the public deployment target for the SSC Design Skill Hub static site.
+
+          Source files are maintained in a separate private repository and synced here automatically for GitHub Pages publishing.
+          EOF
+
+      - name: Sync files into public repo
+        run: |
+          rsync -av --delete staging/ public-repo/
+
+      - name: Commit and push if changed
+        working-directory: public-repo
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/.ssh/public_site_deploy_key -o IdentitiesOnly=yes
+        run: |
+          git config user.name "shopeedesign"
+          git config user.email "vertu.huang@shopee.com"
+
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "No deployment changes."
+            exit 0
+          fi
+
+          git add .
+          git commit -m "Deploy site from private source repo"
+          git push origin main
