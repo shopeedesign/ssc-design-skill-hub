@@ -15,9 +15,6 @@ on:
 jobs:
   sync-public-repo:
     runs-on: ubuntu-latest
-    env:
-      PUBLIC_REPO_DIR: ${{ runner.temp }}/public-repo
-      STAGING_DIR: ${{ runner.temp }}/public-site-staging
 
     steps:
       - name: Check out private source repo
@@ -35,18 +32,19 @@ jobs:
         env:
           GIT_SSH_COMMAND: ssh -i ~/.ssh/public_site_deploy_key -o IdentitiesOnly=yes
         run: |
-          git clone git@github.com:shopeedesign/ssc-design-skill-hub-site.git "$PUBLIC_REPO_DIR"
+          rm -rf "$RUNNER_TEMP/public-repo"
+          git clone git@github.com:shopeedesign/ssc-design-skill-hub-site.git "$RUNNER_TEMP/public-repo"
 
       - name: Prepare deployment files
         shell: bash
         run: |
-          rm -rf "$STAGING_DIR"
-          mkdir -p "$STAGING_DIR/assets"
-          cp index.html "$STAGING_DIR/index.html"
-          cp markdown-viewer.html "$STAGING_DIR/markdown-viewer.html"
-          cp .nojekyll "$STAGING_DIR/.nojekyll"
-          cp -R assets/. "$STAGING_DIR/assets/"
-          cat > "$STAGING_DIR/README.md" <<'EOF'
+          rm -rf "$RUNNER_TEMP/public-site-staging"
+          mkdir -p "$RUNNER_TEMP/public-site-staging/assets"
+          cp index.html "$RUNNER_TEMP/public-site-staging/index.html"
+          cp markdown-viewer.html "$RUNNER_TEMP/public-site-staging/markdown-viewer.html"
+          cp .nojekyll "$RUNNER_TEMP/public-site-staging/.nojekyll"
+          cp -R assets/. "$RUNNER_TEMP/public-site-staging/assets/"
+          cat > "$RUNNER_TEMP/public-site-staging/README.md" <<'EOF'
           # SSC Design Skill Hub Site
 
           This repository is the public deployment target for the SSC Design Skill Hub static site.
@@ -56,13 +54,13 @@ jobs:
 
       - name: Sync files into public repo
         run: |
-          rsync -av --delete --exclude='.git/' "$STAGING_DIR"/ "$PUBLIC_REPO_DIR"/
+          rsync -av --delete --exclude='.git/' "$RUNNER_TEMP/public-site-staging"/ "$RUNNER_TEMP/public-repo"/
 
       - name: Commit and push if changed
-        working-directory: ${{ env.PUBLIC_REPO_DIR }}
         env:
           GIT_SSH_COMMAND: ssh -i ~/.ssh/public_site_deploy_key -o IdentitiesOnly=yes
         run: |
+          cd "$RUNNER_TEMP/public-repo"
           git config user.name "shopeedesign"
           git config user.email "vertu.huang@shopee.com"
 
