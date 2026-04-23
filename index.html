@@ -459,6 +459,30 @@
           </div>
         </div>
       </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="uxwriting"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >ux-writing</h3>
+          <span class="badge">界面文案审查</span>
+        </div>
+        <p>面向供应链产品的界面文案撰写与审查 Skill。结合 SSC UX Writing Guideline，对按钮、字段、状态、弹窗等文案输出可直接落地的改写建议与备选方案。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/ux-writing" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/ux-writing/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="uxWritingPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -504,6 +528,10 @@
       mockdataPrompt: `请为 Codex 安装 skill「figma-mockdata-reviewer」。
 仓库：https://github.com/shopeedesign/figma-mockdata-reviewer
 将仓库 main 分支的 SKILL.md 放到 ~/.codex/skills/figma-mockdata-reviewer/SKILL.md。
+完成后回复：成功或失败。`,
+      uxWritingPrompt: `请为 Codex 安装 skill「ux-writing」。
+仓库：https://github.com/shopeedesign/ux-writing
+将仓库完整同步到 ~/.codex/skills/ux-writing/（须含 references/checklist，勿只拷 SKILL.md）。
 完成后回复：成功或失败。`
     };
 
@@ -568,6 +596,27 @@
           </ul>
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.mockdataPrompt}</div>
+          <p class="tip">本Skill由vertu.huang撰写</p>
+        `
+      },
+      uxwriting: {
+        title: "ux-writing",
+        html: `
+          <h2>ux-writing</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>面向供应链产品的界面文案撰写与审查，帮助团队基于统一规范产出更准确、清晰、一致的表达。</li>
+            <li>结合 SSC UX Writing Guideline，对按钮、字段、状态、弹窗等常见组件文案输出结构化优化建议与备选方案。</li>
+            <li>适用于单句文案优化、从零撰写界面文案，以及 Figma 链接中的文案 review 与回写。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要「文案审查 / UX Writing / copy review」类产出，或要优化按钮、字段、状态、弹窗等界面文案时。</li>
+            <li>可直接发送一句现有文案、描述具体界面场景，或提供 Figma 链接要求做文案巡检。</li>
+            <li>不适合：重点在 mock data 真实性审查、整稿设计体验评审，或纯设计说明生成的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.uxWritingPrompt}</div>
           <p class="tip">本Skill由vertu.huang撰写</p>
         `
       }
