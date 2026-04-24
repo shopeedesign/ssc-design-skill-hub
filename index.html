@@ -483,6 +483,30 @@
           </div>
         </div>
       </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="confluence"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >confluence-search</h3>
+          <span class="badge">Confluence搜索</span>
+        </div>
+        <p>用于搜索内部 Confluence 文档并输出带来源链接的中文总结。适合快速查询系统文档、流程规范、项目方案和知识沉淀，减少手动翻找成本。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/confluence-search" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/confluence-search/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="confluencePrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -532,6 +556,10 @@
       uxWritingPrompt: `请安装 skill「ux-writing」。
 仓库：https://github.com/shopeedesign/ux-writing
 请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 ux-writing 所需的 references/checklist 等文件，不要只拷贝 SKILL.md。
+完成后回复：成功或失败。`,
+      confluencePrompt: `请安装 skill「confluence-search」。
+仓库：https://github.com/shopeedesign/confluence-search
+请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 confluence-search。
 完成后回复：成功或失败。`
     };
 
@@ -617,6 +645,27 @@
           </ul>
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.uxWritingPrompt}</div>
+          <p class="tip">本Skill由vertu.huang撰写</p>
+        `
+      },
+      confluence: {
+        title: "confluence-search",
+        html: `
+          <h2>confluence-search</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>用于搜索内部 Confluence 文档，帮助团队快速定位系统文档、流程规范、项目方案和知识沉淀。</li>
+            <li>基于自然语言问题提炼搜索词，抓取相关页面内容，并输出带来源链接的中文总结。</li>
+            <li>适合作为其他 skill 的前置能力，例如先查文档，再做 PRD 提炼或需求分析。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要「查 Confluence / 搜内部文档 / 找流程说明」类结果，或只知道主题关键词、还不知道具体页面标题时。</li>
+            <li>已在当前机器完成 Confluence 凭据配置，并可以访问目标知识库时。</li>
+            <li>不适合：要直接分析 PRD 并输出设计简报、要写回 Confluence，或当前机器还未完成授权配置的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.confluencePrompt}</div>
           <p class="tip">本Skill由vertu.huang撰写</p>
         `
       }
