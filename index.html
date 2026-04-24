@@ -448,6 +448,30 @@
         <div class="card-title-row">
           <h3
             class="card-title"
+            data-open-modal="designresearch"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >Design_Research</h3>
+          <span class="badge">设计竞品素材研究</span>
+        </div>
+        <p>围绕具体 app / web 功能自动推断竞品，重点收集界面截图、使用视频和页面级证据，并按竞品表格化输出，方便设计师快速找参考。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/Design_Research" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/Design_Research/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="designResearchPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
             data-open-modal="mockdata"
             tabindex="0"
             role="button"
@@ -605,6 +629,10 @@
 仓库：https://github.com/shopeedesign/design-selfcheck
 请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 design-selfcheck 所需的 reference/checklist 等文件，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
+      designResearchPrompt: `请安装 skill「Design_Research」。
+仓库：https://github.com/shopeedesign/Design_Research
+请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 Design_Research 所需的 agents/openai.yaml 等文件，不要只拷贝 SKILL.md。
+完成后回复：成功或失败。`,
       mockdataPrompt: `请安装 skill「figma-mockdata-reviewer」。
 仓库：https://github.com/shopeedesign/figma-mockdata-reviewer
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 figma-mockdata-reviewer。
@@ -668,6 +696,27 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.selfcheckPrompt}</div>
           <p class="tip">作者：vertu.huang</p>
+        `
+      },
+      designresearch: {
+        title: "Design_Research",
+        html: `
+          <h2>Design_Research</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>围绕具体 app / web 功能做竞品设计研究，重点不是泛分析，而是帮助快速找到可直接参考的界面截图、使用视频和页面级证据。</li>
+            <li>根据产品名、模块或功能自动推断最值得参考的竞品，并按竞品聚合整理结果。</li>
+            <li>支持按 <code>应用商店相关</code>、<code>视频或者直接使用视角</code>、<code>其他相关截图等</code> 三类证据输出。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要找某个功能的竞品界面，例如 <code>delivery notification</code>、任务首页、岗位列表页等。</li>
+            <li>想看竞品的真实界面和使用流程，而不是只看官方宣传或泛讨论。</li>
+            <li>不适合：完整商业分析、口碑研究、或没有明确功能目标的泛竞品分析场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.designResearchPrompt}</div>
+          <p class="tip">作者：kaibing.liu</p>
         `
       },
       mockdata: {
