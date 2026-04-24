@@ -452,13 +452,13 @@
             tabindex="0"
             role="button"
             title="点击查看详情"
-          >Design_Research</h3>
+          >design-research</h3>
           <span class="badge">设计竞品素材研究</span>
         </div>
         <p>围绕具体 app / web 功能自动推断竞品，重点收集界面截图、使用视频和页面级证据，并按竞品表格化输出，方便设计师快速找参考。</p>
         <div class="card-footer-row">
           <div class="card-refs">
-            <a href="https://github.com/shopeedesign/Design_Research" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/Design_Research/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+            <a href="https://github.com/shopeedesign/design-research" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/design-research/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
           </div>
           <div class="card-actions-group">
             <div class="card-actions">
@@ -568,30 +568,6 @@
         <div class="card-title-row">
           <h3
             class="card-title"
-            data-open-modal="designresearch"
-            tabindex="0"
-            role="button"
-            title="点击查看详情"
-          >design-research</h3>
-          <span class="badge">竞品设计研究</span>
-        </div>
-        <p>围绕具体 app / web 功能快速收集竞品界面截图、使用视频和页面级证据，帮助设计师先拿到可直接参考的真实素材，而不是泛竞品分析。</p>
-        <div class="card-footer-row">
-          <div class="card-refs">
-            <a href="https://github.com/shopeedesign/design-research" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/design-research/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
-          </div>
-          <div class="card-actions-group">
-            <div class="card-actions">
-              <button type="button" class="btn ghost" data-copy="designResearchPrompt">一键安装</button>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-title-row">
-          <h3
-            class="card-title"
             data-open-modal="gworkspace"
             tabindex="0"
             role="button"
@@ -653,9 +629,9 @@
 仓库：https://github.com/shopeedesign/design-selfcheck
 请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 design-selfcheck 所需的 reference/checklist 等文件，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
-      designResearchPrompt: `请安装 skill「Design_Research」。
-仓库：https://github.com/shopeedesign/Design_Research
-请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 Design_Research 所需的 agents/openai.yaml 等文件，不要只拷贝 SKILL.md。
+      designResearchPrompt: `请安装 skill「design-research」。
+仓库：https://github.com/shopeedesign/design-research
+请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 design-research 所需的 agents/openai.yaml 等文件，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
       mockdataPrompt: `请安装 skill「figma-mockdata-reviewer」。
 仓库：https://github.com/shopeedesign/figma-mockdata-reviewer
@@ -672,10 +648,6 @@
       brdPrompt: `请安装 skill「brd-analyzer」。
 仓库：https://github.com/shopeedesign/brd-analyzer
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 brd-analyzer。
-完成后回复：成功或失败。`,
-      designResearchPrompt: `请安装 skill「design-research」。
-仓库：https://github.com/shopeedesign/design-research
-请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 design-research 所需的 agents 等文件，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
       gworkspacePrompt: `请安装 skill「google-workspace」。
 仓库：https://github.com/shopeedesign/google-workspace
@@ -727,9 +699,9 @@
         `
       },
       designresearch: {
-        title: "Design_Research",
+        title: "design-research",
         html: `
-          <h2>Design_Research</h2>
+          <h2>design-research</h2>
           <h4>Skill 用途</h4>
           <ul>
             <li>围绕具体 app / web 功能做竞品设计研究，重点不是泛分析，而是帮助快速找到可直接参考的界面截图、使用视频和页面级证据。</li>
@@ -829,27 +801,6 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.brdPrompt}</div>
           <p class="tip">作者：harbor.liu</p>
-        `
-      },
-      designresearch: {
-        title: "design-research",
-        html: `
-          <h2>design-research</h2>
-          <h4>Skill 用途</h4>
-          <ul>
-            <li>围绕具体 app / web 功能做竞品设计研究，优先收集真实界面截图、使用视频和页面级证据。</li>
-            <li>自动推断更值得参考的竞品，而不是要求用户先列完整名单。</li>
-            <li>适用于设计方向探索、页面结构对比和交互方案参考，不适合泛市场分析。</li>
-          </ul>
-          <h4>何时使用</h4>
-          <ul>
-            <li>需要「竞品界面研究 / 找截图 / 找真实使用视频」类结果，且已知目标模块、功能或场景时。</li>
-            <li>输入可为产品名、目标功能、可选地区，以及偏好的素材类型（截图、视频或两者）。</li>
-            <li>不适合：只想做商业策略分析、SWOT、市场格局判断，或只收集评论讨论而不看界面流程的场景。</li>
-          </ul>
-          <h4>一键安装（复制下方 Prompt）</h4>
-          <div class="prompt-box">${prompts.designResearchPrompt}</div>
-          <p class="tip">作者：shopeedesign</p>
         `
       },
       gworkspace: {
