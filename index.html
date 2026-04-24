@@ -266,8 +266,16 @@
       height: 34px;
       border-radius: 50%;
       border: 0;
-      background: #f7f7f7;
+      background: transparent;
+      color: #666666;
       cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .close:hover,
+    .close:focus-visible {
+      background: #f7f7f7;
+      color: #2d2d2d;
     }
 
     .modal h2 {
