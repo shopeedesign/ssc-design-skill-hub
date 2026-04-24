@@ -515,6 +515,30 @@
           </div>
         </div>
       </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="brd"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >brd-analyzer</h3>
+          <span class="badge">BRD需求分析</span>
+        </div>
+        <p>用于在 PRD 编写前分析 BRD，提炼业务背景、核心痛点、需求缺口和可讨论的产品方向，帮助团队更高效地准备需求对齐与方案讨论。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/brd-analyzer" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/brd-analyzer/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="brdPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -568,6 +592,10 @@
       confluencePrompt: `请安装 skill「confluence-search」。
 仓库：https://github.com/shopeedesign/confluence-search
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 confluence-search。
+完成后回复：成功或失败。`,
+      brdPrompt: `请安装 skill「brd-analyzer」。
+仓库：https://github.com/shopeedesign/brd-analyzer
+请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 brd-analyzer。
 完成后回复：成功或失败。`
     };
 
@@ -675,6 +703,27 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.confluencePrompt}</div>
           <p class="tip">本Skill由harbor.liu撰写</p>
+        `
+      },
+      brd: {
+        title: "brd-analyzer",
+        html: `
+          <h2>brd-analyzer</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>用于在 PRD 编写前分析 BRD，帮助团队快速理解业务背景、核心痛点和需求动机。</li>
+            <li>能够识别需求中的缺失信息、矛盾点、弱假设和优先级模糊区域，并整理成结构化分析结果。</li>
+            <li>适合会前准备、方案讨论和需求对齐，帮助产品、设计和项目更快建立共同认知。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要「BRD 分析 / 业务需求解读 / 会前问题清单」类产出，或希望先把 BRD 分析清楚再开始写 PRD 时。</li>
+            <li>输入可为正文、Google Doc、文件或其他文档来源，必要时可补系统背景一起分析。</li>
+            <li>不适合：只想搜索文档、已拿到完整 PRD 要做设计简报，或要做设计稿评审的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.brdPrompt}</div>
+          <p class="tip">本Skill由vertu.huang撰写</p>
         `
       }
     };
