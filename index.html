@@ -539,6 +539,30 @@
           </div>
         </div>
       </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="gworkspace"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >google-workspace</h3>
+          <span class="badge">Google文档读写</span>
+        </div>
+        <p>用于读写 Google Docs、Sheets、Slides 和 Drive 文件，适合处理 Google 文档、表格和演示文稿内容。首次使用前需要完成 Google 账号 OAuth 授权配置。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/google-workspace" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/google-workspace/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="gworkspacePrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -596,6 +620,10 @@
       brdPrompt: `请安装 skill「brd-analyzer」。
 仓库：https://github.com/shopeedesign/brd-analyzer
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 brd-analyzer。
+完成后回复：成功或失败。`,
+      gworkspacePrompt: `请安装 skill「google-workspace」。
+仓库：https://github.com/shopeedesign/google-workspace
+请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 google-workspace。
 完成后回复：成功或失败。`
     };
 
@@ -724,6 +752,27 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.brdPrompt}</div>
           <p class="tip">作者：harbor.liu</p>
+        `
+      },
+      gworkspace: {
+        title: "google-workspace",
+        html: `
+          <h2>google-workspace</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>用于读写 Google Docs、Sheets、Slides 和 Drive 文件，帮助团队直接处理 Google Workspace 文档资产。</li>
+            <li>支持读取、搜索、导出和部分更新操作，适合 BRD、表结构、共享文档和演示材料等场景。</li>
+            <li>可作为其他 skill 的基础能力，例如先读取 Google 文档，再做需求分析、会议安排或数据整理。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要「读取 Google Doc / 读表格 / 搜 Drive 文件 / 导出演示文稿」类结果，且文件来源在 Google Workspace 中时。</li>
+            <li>当前机器已完成 Google OAuth 授权，或你准备先按 README 完成一次账号授权配置时。</li>
+            <li>不适合：只是搜索 Confluence / Jira 文档，或当前机器无法完成 Google 登录授权的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.gworkspacePrompt}</div>
+          <p class="tip">作者：vertu.huang</p>
         `
       }
     };
