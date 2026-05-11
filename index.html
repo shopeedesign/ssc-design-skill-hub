@@ -544,6 +544,30 @@
         <div class="card-title-row">
           <h3
             class="card-title"
+            data-open-modal="confluenceauth"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >confluence-auth-setup</h3>
+          <span class="badge">Confluence一键授权</span>
+        </div>
+        <p>用于在本机一键写入 Confluence 读取凭据，帮助团队快速打通内部文档访问能力。支持只粘贴 token，自动补全 Shopee Confluence 默认配置，适合作为 confluence-search 和 prd-design-brief 的前置 skill。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/confluence-auth-setup" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/confluence-auth-setup/blob/main/README.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="confluenceAuthPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
             data-open-modal="brd"
             tabindex="0"
             role="button"
@@ -644,6 +668,10 @@
       confluencePrompt: `请安装 skill「confluence-search」。
 仓库：https://github.com/shopeedesign/confluence-search
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 confluence-search。
+完成后回复：成功或失败。`,
+      confluenceAuthPrompt: `请安装 skill「confluence-auth-setup」。
+仓库：https://github.com/shopeedesign/confluence-auth-setup
+请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 confluence-auth-setup 所需的 scripts/install_confluence_credentials.sh 文件，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
       brdPrompt: `请安装 skill「brd-analyzer」。
 仓库：https://github.com/shopeedesign/brd-analyzer
@@ -780,6 +808,27 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.confluencePrompt}</div>
           <p class="tip">作者：harbor.liu</p>
+        `
+      },
+      confluenceauth: {
+        title: "confluence-auth-setup",
+        html: `
+          <h2>confluence-auth-setup</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>用于在本机一键写入 Confluence 读取凭据，减少团队在授权配置上的重复阻塞。</li>
+            <li>支持三种输入：纯 token、单行 <code>export CONFLUENCE_TOKEN=...</code>、完整 export 授权块。</li>
+            <li>若用户只提供 token，会自动补全 Shopee Confluence 默认配置，并写入 <code>~/.confluence-credentials</code>。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>第一次安装 <code>confluence-search</code>、<code>prd-design-brief</code>，或任何需要读公司 Confluence 的 skill 时。</li>
+            <li>团队成员已拿到 PAT / Bearer token，但不会手动配置本地凭据文件时。</li>
+            <li>不适合：没有 token、需要申请权限本身，或希望写回 Confluence 的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.confluenceAuthPrompt}</div>
+          <p class="tip">作者：vertu.huang</p>
         `
       },
       brd: {
