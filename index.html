@@ -611,6 +611,30 @@
           </div>
         </div>
       </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
+            data-open-modal="semanticswriter"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >component-semantics-writer</h3>
+          <span class="badge">组件语义规范生成</span>
+        </div>
+        <p>用于从 Figma Library、组件文档站、Code Connect 和 API 元数据中生成 AI 友好的组件语义化文档，帮助后续 AI 更准确选择组件、变体、组合方式与文案边界。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopeedesign/component-semantics-writer" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopeedesign/component-semantics-writer/blob/main/SKILL.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="semanticsWriterPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -680,6 +704,10 @@
       gworkspacePrompt: `请安装 skill「google-workspace」。
 仓库：https://github.com/shopeedesign/google-workspace
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 google-workspace。
+完成后回复：成功或失败。`,
+      semanticsWriterPrompt: `请安装 skill「component-semantics-writer」。
+仓库：https://github.com/shopeedesign/component-semantics-writer
+请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 component-semantics-writer 所需的 agents/openai.yaml 与 references/self-check.md，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`
     };
 
@@ -871,6 +899,27 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.gworkspacePrompt}</div>
           <p class="tip">作者：Google</p>
+        `
+      },
+      semanticswriter: {
+        title: "component-semantics-writer",
+        html: `
+          <h2>component-semantics-writer</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>用于为设计系统组件生成 AI 友好的语义化 Markdown 文档，重点不是视觉描述，而是“什么时候该选哪个组件、哪个变体”。</li>
+            <li>可结合 Figma Library、组件文档站、Code Connect、API metadata 与可选源码信息，整理 Input、Select、Button、Table、DatePicker、Form 等组件的使用边界。</li>
+            <li>适合沉淀组件语义、变体选择规则、常见误用、文案规范和最佳实践，帮助后续 AI 更稳定地产出设计系统代码与规范文档。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要“组件语义文档 / 组件规范 / 变体选择规则 / AI 友好设计系统说明”类产出时。</li>
+            <li>特别适合 SSC UI 组件库语义梳理，默认会参考 SSC UI 的 Figma Library 和组件文档站。</li>
+            <li>不适合：只想写单个页面 PRD、做设计稿评审，或没有组件级语义目标的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.semanticsWriterPrompt}</div>
+          <p class="tip">作者：jingqixu</p>
         `
       }
     };
