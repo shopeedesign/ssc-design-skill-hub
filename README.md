@@ -8,7 +8,7 @@
 2. **Branch** 选择 `main`，文件夹选 **`/ (root)`**，保存。
 3. 等待一分钟左右，站点地址一般为：
 
-   **`https://shopeedesign.github.io/ssc-design-skill-hub/`**
+   **`https://shopee-supplychain-design.github.io/ssc-design-skill-hub/`**
 
    （若仓库名不同，请将路径中的 `ssc-design-skill-hub` 换成你的仓库名。）
 
