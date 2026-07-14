@@ -592,6 +592,30 @@
         <div class="card-title-row">
           <h3
             class="card-title"
+            data-open-modal="bizdsbootstrap"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >business-design-system-bootstrap</h3>
+          <span class="badge">业务设计系统启动</span>
+        </div>
+        <p>基于 SSC 基础设计系统创建业务级设计系统叠加层，自动生成源驱动的标准化模板与差异校验器，适用于 NSS Mobile/PC UI 等业务系统的从零搭建。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopee-supplychain-design/business-design-system-bootstrap" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopee-supplychain-design/business-design-system-bootstrap/blob/main/SKILL.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="bizDsBootstrapPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
             data-open-modal="gworkspace"
             tabindex="0"
             role="button"
@@ -700,6 +724,10 @@
       brdPrompt: `请安装 skill「brd-analyzer」。
 仓库：https://github.com/shopee-supplychain-design/brd-analyzer
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 brd-analyzer。
+完成后回复：成功或失败。`,
+      bizDsBootstrapPrompt: `请安装 skill「business-design-system-bootstrap」。
+仓库：https://github.com/shopee-supplychain-design/business-design-system-bootstrap
+请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 business-design-system-bootstrap 所需的 agents/openai.yaml 与 references/workflow.md，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
       gworkspacePrompt: `请安装 skill「google-workspace」。
 仓库：https://github.com/shopee-supplychain-design/google-workspace
@@ -878,6 +906,27 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.brdPrompt}</div>
           <p class="tip">作者：harbor.liu</p>
+        `
+      },
+      bizdsbootstrap: {
+        title: "business-design-system-bootstrap",
+        html: `
+          <h2>business-design-system-bootstrap</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>用于在 SSC Open Design 仓库中创建或更新业务层面的设计系统叠加层与标准化模板，本质是将 SSC 已有基础系统进行「业务化」装修。</li>
+            <li>覆盖设计系统文档、差异映射表、组件继承清单、图标资产清单、标准化模板与校验器的一整套搭环境 + 产出流程。</li>
+            <li>适合使用 nss-mobile-ui-react、nss-pc-ui-react 等业务设计系统的团队，从 Figma 典型页面和差异文档出发，自动生成可维护的标准化产出。</li>
+          </ul>
+          <h4>何时使用</h4>
+          <ul>
+            <li>需要建立或更新业务系统的全套设计资产（文档 + 模板 + 校验器），且已拿到基础设计系统和差异文档时。</li>
+            <li>特别适合多业务线复用同一基础系统的场景，用「叠加层」思路避免分支维护的混乱。</li>
+            <li>不适合：只想要单个页面模板、没有基础设计系统依赖、或不需要差异文档化的场景。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.bizDsBootstrapPrompt}</div>
+          <p class="tip">作者：jingqi.xu</p>
         `
       },
       gworkspace: {
