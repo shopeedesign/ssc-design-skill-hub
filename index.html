@@ -424,6 +424,30 @@
         <div class="card-title-row">
           <h3
             class="card-title"
+            data-open-modal="dwdesignsystem"
+            tabindex="0"
+            role="button"
+            title="点击查看详情"
+          >dw-design-system</h3>
+          <span class="badge">Digital Worker 设计系统</span>
+        </div>
+        <p>Digital Worker 的视觉语言与基础 UI 模式，帮助设计和实现密集、稳定、可扫描的工作型产品界面。</p>
+        <div class="card-footer-row">
+          <div class="card-refs">
+            <a href="https://github.com/shopee-supplychain-design/dw-design-system" target="_blank" rel="noopener noreferrer">Github仓库</a><span class="refs-sep">｜</span><a href="https://github.com/shopee-supplychain-design/dw-design-system/blob/main/SKILL.md" target="_blank" rel="noopener noreferrer">使用指南</a>
+          </div>
+          <div class="card-actions-group">
+            <div class="card-actions">
+              <button type="button" class="btn ghost" data-copy="dwDesignSystemPrompt">一键安装</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title-row">
+          <h3
+            class="card-title"
             data-open-modal="selfcheck"
             tabindex="0"
             role="button"
@@ -729,6 +753,10 @@
 仓库：https://github.com/shopee-supplychain-design/business-design-system-bootstrap
 请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 business-design-system-bootstrap 所需的 agents/openai.yaml 与 references/workflow.md，不要只拷贝 SKILL.md。
 完成后回复：成功或失败。`,
+      dwDesignSystemPrompt: `请安装 skill「dw-design-system」。
+仓库：https://github.com/shopee-supplychain-design/dw-design-system
+请将仓库完整同步到当前 AI 工具可用的 skill 目录中，并保留 dw-design-system 所需的 agents/openai.yaml 与 digital-worker-logo.svg，不要只拷贝 SKILL.md。
+完成后回复：成功或失败。`,
       gworkspacePrompt: `请安装 skill「google-workspace」。
 仓库：https://github.com/shopee-supplychain-design/google-workspace
 请将仓库 main 分支的 SKILL.md 安装到当前 AI 工具可用的 skill 目录中，并命名为 google-workspace。
@@ -927,6 +955,21 @@
           <h4>一键安装（复制下方 Prompt）</h4>
           <div class="prompt-box">${prompts.bizDsBootstrapPrompt}</div>
           <p class="tip">作者：jingqi.xu</p>
+        `
+      },
+      dwdesignsystem: {
+        title: "dw-design-system",
+        html: `
+          <h2>dw-design-system</h2>
+          <h4>Skill 用途</h4>
+          <ul>
+            <li>应用 Digital Worker 的视觉语言和基础 UI 模式，支持产品界面设计、评审与实现。</li>
+            <li>强调密集、冷静、以工作为中心的操作界面，优先复用 DW 组件和 Ant Design 基础组件。</li>
+            <li>覆盖导航、页面布局、表格、卡片、表单、反馈状态、可访问性与竞品界面转换规则。</li>
+          </ul>
+          <h4>一键安装（复制下方 Prompt）</h4>
+          <div class="prompt-box">${prompts.dwDesignSystemPrompt}</div>
+          <p class="tip">作者：Digital Worker</p>
         `
       },
       gworkspace: {
